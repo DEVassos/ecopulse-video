@@ -13,6 +13,18 @@ export interface VideoAssetMapping {
 }
 
 export const VIDEO_ASSET_MAP: Record<string, VideoAssetMapping> = {
+  "videos/00_home_to_login.mp4": {
+    videoFile: "videos/00_home_to_login.mp4",
+    fallbackImage: "images/login.png",
+    label: "Home → Login",
+    specs: "1080p • 60fps • Navegação inicial",
+  },
+  "videos/01_login_typing.mp4": {
+    videoFile: "videos/01_login_typing.mp4",
+    fallbackImage: "images/login.png",
+    label: "Login Corporativo",
+    specs: "1080p • 60fps • Digitação e acesso",
+  },
   "videos/01_globe_rotation.mp4": {
     videoFile: "videos/01_globe_rotation.mp4",
     fallbackImage: "images/dashboard 1.png",

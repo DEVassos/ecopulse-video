@@ -30,8 +30,14 @@ const SCENE_COMPONENTS = {
   cena7: Cena7Outro,
 } as const;
 
-const MUSIC_BASE_VOLUME = 0.1;
-const MUSIC_DUCKED_VOLUME = 0.035;
+/**
+ * `audio/musica_de_fundo.mp3` é uma masterização quente (RMS ~-11,6 dBFS,
+ * ~10 dB acima da narração). Por isso os volumes abaixo são baixos: 0,14 dá
+ * ~-28,7 dBFS de leito e 0,03 deixa a trilha ~-42 dBFS durante a locução.
+ */
+const MUSIC_FILE = "audio/musica_de_fundo.mp3";
+const MUSIC_BASE_VOLUME = 0.14;
+const MUSIC_DUCKED_VOLUME = 0.03;
 const MUSIC_DUCK_RAMP_FRAMES = 14;
 const MUSIC_FADE_IN_SECONDS = 1.2;
 const MUSIC_FADE_OUT_SECONDS = 2;
@@ -81,7 +87,7 @@ export const EcoPulseComposition: React.FC<EcoPulseCompositionProps> = ({
   return (
     <AbsoluteFill style={{ backgroundColor: THEME.colors.bg }}>
       <SafeAudio
-        src="audio/bg_music.mp3"
+        src={MUSIC_FILE}
         volume={musicVolume}
         loop
         fadeInSeconds={MUSIC_FADE_IN_SECONDS}

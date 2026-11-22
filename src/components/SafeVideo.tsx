@@ -24,6 +24,8 @@ export interface SafeVideoProps {
   trimBefore?: number;
   durationInFrames?: number;
   volume?: number;
+  /** Velocidade de reprodução da gravação (1 = tempo real). */
+  playbackRate?: number;
   /** Intensidade do Ken Burns aplicado ao print estático de fallback */
   kenBurns?: boolean;
 }
@@ -45,6 +47,7 @@ export const SafeVideo: React.FC<SafeVideoProps> = ({
   trimBefore,
   durationInFrames,
   volume = 1,
+  playbackRate = 1,
   kenBurns = true,
 }) => {
   const frame = useCurrentFrame();
@@ -62,6 +65,7 @@ export const SafeVideo: React.FC<SafeVideoProps> = ({
           trimBefore={trimBefore}
           durationInFrames={durationInFrames}
           volume={volume}
+          playbackRate={playbackRate}
           style={{
             width: "100%",
             height: "100%",

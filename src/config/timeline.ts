@@ -103,6 +103,122 @@ export const TIMELINE_CONFIG: TimelineConfig = {
   },
 };
 
+export interface Cena1Clip {
+  src: string;
+  /** Trecho usado da gravação, em segundos do arquivo original. */
+  startSeconds: number;
+  endSeconds: number;
+  /** Fração da cena em que o trecho entra e sai. */
+  from: number;
+  to: number;
+  url: string;
+}
+
+/**
+ * Cena 1 - fração da cena em que a abertura (fundo + pergunta) termina e as
+ * gravações entram. Trechos medidos no material entregue:
+ * `00_home_to_login.mp4` (12,36s) tem a Home até ~8s e o corte para o login
+ * logo depois; `01_login_typing.mp4` (33,60s) concentra a digitação e o
+ * clique em "Entrar" por volta de 25s.
+ *
+ * A duração de cada trecho é preservada: a diferença entre a janela da cena e
+ * o tempo de origem vira `playbackRate` (ver Cena1Hook), então trocar o áudio
+ * da narração nunca corta a ação.
+ */
+export const CENA1_HOOK_END = 0.27;
+
+export const CENA1_CLIPS: readonly Cena1Clip[] = [
+  {
+    // Home: ultimo trecho antes do corte para o login.
+    src: "videos/00_home_to_login.mp4",
+    startSeconds: 6,
+    endSeconds: 8,
+    from: CENA1_HOOK_END,
+    to: 0.4,
+    url: "app.ecopulse.greenops.io",
+  },
+  {
+    // Corte para a tela de login.
+    src: "videos/00_home_to_login.mp4",
+    startSeconds: 8.8,
+    endSeconds: 11.8,
+    from: 0.4,
+    to: 0.58,
+    url: "app.ecopulse.greenops.io/login",
+  },
+  {
+    // Digitacao do e-mail/senha e clique em "Entrar".
+    src: "videos/01_login_typing.mp4",
+    startSeconds: 19.6,
+    endSeconds: 25.6,
+    from: 0.58,
+    to: 0.9,
+    url: "app.ecopulse.greenops.io/login",
+  },
+  {
+    // Transicao para o dashboard, ja com o badge de boas-vindas.
+    src: "videos/01_login_typing.mp4",
+    startSeconds: 27.3,
+    endSeconds: 29.3,
+    from: 0.9,
+    to: 1,
+    url: "app.ecopulse.greenops.io/dashboard",
+  },
+] as const;
+
+export interface Cena1HookBeat {
+  from: number;
+  to: number;
+  text: string;
+  /** Palavras destacadas em verde. */
+  emphasize: readonly string[];
+}
+
+/** Cena 1 - a pergunta da abertura, revelada palavra por palavra. */
+export const CENA1_HOOK_BEATS: readonly Cena1HookBeat[] = [
+  {
+    from: 0,
+    to: 0.105,
+    text: "Sua empresa sabe…",
+    emphasize: [],
+  },
+  {
+    from: 0.105,
+    to: CENA1_HOOK_END,
+    text: "quanto a infraestrutura de TI custa em carbono?",
+    emphasize: ["carbono?"],
+  },
+] as const;
+
+export interface Cena1Caption {
+  from: number;
+  to: number;
+  kicker: string;
+  text: string;
+  /** Trecho do texto destacado em verde. */
+  highlight: string;
+}
+
+/** Cena 1 - legendas sincronizadas com as frases da narração. */
+export const CENA1_CAPTIONS: readonly Cena1Caption[] = [
+  {
+    // "O EcoPulse traduz métricas... emissões de CO2" (5,3s -> 10,9s)
+    from: CENA1_HOOK_END,
+    to: 0.575,
+    kicker: "O EcoPulse",
+    text: "Traduz métricas de servidores em energia e emissões de CO₂.",
+    highlight: "CO₂",
+  },
+  {
+    // "E mais do que isso: mostramos onde você pode economizar" (11,1s -> 15,7s)
+    from: 0.575,
+    to: 0.83,
+    kicker: "GreenOps na prática",
+    text: "Nós mostramos exatamente onde você pode economizar.",
+    highlight: "economizar",
+  },
+] as const;
+
 /**
  * Cena 2 - divisão interna em 3 momentos, em frações da duração da cena.
  * Frações (em vez de segundos fixos) mantêm a divisão correta se o áudio mudar.
