@@ -3,6 +3,8 @@
  * Fornece fallback inteligente para os prints reais do app caso os vídeos ainda estejam sendo gravados.
  */
 
+import { RECORDED_VIDEOS } from "./generated/videos";
+
 export interface VideoAssetMapping {
   videoFile: string;
   fallbackImage: string;
@@ -49,7 +51,7 @@ export const VIDEO_ASSET_MAP: Record<string, VideoAssetMapping> = {
   },
   "videos/07_report_pareto.mp4": {
     videoFile: "videos/07_report_pareto.mp4",
-    fallbackImage: "images/realtorio 1.png",
+    fallbackImage: "images/relatorio 1.png",
     label: "Relatório Executivo & Pareto",
     specs: "1080p • 60fps • Curva Pareto",
   },
@@ -62,19 +64,14 @@ export const VIDEO_ASSET_MAP: Record<string, VideoAssetMapping> = {
 };
 
 /**
- * Lista de arquivos de vídeo que já foram gravados fisicamente em public/videos/
- * Quando você gravar e colocar um arquivo .mp4 na pasta public/videos/, adicione o nome dele aqui
- * (ou configure ENABLE_ALL_VIDEOS = true).
+ * Um vídeo é considerado disponível quando o arquivo .mp4 existe de fato em
+ * public/videos/. A lista é gerada por `npm run scan` (scripts/scan-assets.mjs),
+ * então gravar um vídeo e rodar o scan basta — sem editar código.
  */
-export const RECORDED_VIDEOS: string[] = [];
+export const hasRecordedVideo = (videoPath: string): boolean =>
+  RECORDED_VIDEOS.includes(videoPath);
 
-/**
- * Se true, tenta sempre carregar o vídeo real via <OffthreadVideo>.
- * Se false, usa o fallback com o screenshot real animado e elegante enquanto você não gravar os vídeos.
- */
-export const FORCE_VIDEO_PLAYBACK = false;
-
-export const hasRecordedVideo = (videoPath: string): boolean => {
-  if (FORCE_VIDEO_PLAYBACK) return true;
-  return RECORDED_VIDEOS.includes(videoPath);
-};
+/** Caminhos ainda pendentes de gravação. */
+export const PENDING_VIDEOS: readonly string[] = Object.keys(
+  VIDEO_ASSET_MAP
+).filter((videoPath) => !hasRecordedVideo(videoPath));

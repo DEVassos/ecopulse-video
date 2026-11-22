@@ -4,14 +4,19 @@ import {
   staticFile,
   Img,
   useCurrentFrame,
+  useVideoConfig,
   interpolate,
+  spring,
 } from "remotion";
 import { THEME } from "../config/theme";
 import { hasRecordedVideo, VIDEO_ASSET_MAP } from "../config/assets";
+import { isPlaceholderOverlayEnabled } from "../config/preview";
 
 export interface SafeVideoProps {
-  src: string; // e.g. "videos/01_globe_rotation.mp4"
-  fallbackImage?: string; // e.g. "images/dashboard 1.png"
+  /** e.g. "videos/01_globe_rotation.mp4" */
+  src: string;
+  /** e.g. "images/dashboard 1.png" */
+  fallbackImage?: string;
   label?: string;
   className?: string;
   style?: React.CSSProperties;
@@ -19,8 +24,17 @@ export interface SafeVideoProps {
   trimBefore?: number;
   durationInFrames?: number;
   volume?: number;
+  /** Intensidade do Ken Burns aplicado ao print estático de fallback */
+  kenBurns?: boolean;
 }
 
+/**
+ * Renderiza a gravação de tela quando ela existe em public/videos/ e cai
+ * automaticamente para o print do app enquanto o vídeo não foi gravado.
+ *
+ * O componente é sempre montado dentro de um box 16:9 (ver BrowserFrame), então
+ * `object-contain` nunca corta conteúdo, independente da resolução gravada.
+ */
 export const SafeVideo: React.FC<SafeVideoProps> = ({
   src,
   fallbackImage,
@@ -31,16 +45,17 @@ export const SafeVideo: React.FC<SafeVideoProps> = ({
   trimBefore,
   durationInFrames,
   volume = 1,
+  kenBurns = true,
 }) => {
   const frame = useCurrentFrame();
+  const { durationInFrames: localDuration, fps } = useVideoConfig();
   const isVideoAvailable = hasRecordedVideo(src);
 
-  // Se o vídeo físico existe, renderiza diretamente com <OffthreadVideo>
   if (isVideoAvailable) {
     return (
       <div
         className={`relative w-full h-full overflow-hidden ${className}`}
-        style={{ ...style, backgroundColor: THEME.colors.bg }}
+        style={{ ...style, backgroundColor: "#000" }}
       >
         <OffthreadVideo
           src={staticFile(src)}
@@ -50,96 +65,105 @@ export const SafeVideo: React.FC<SafeVideoProps> = ({
           style={{
             width: "100%",
             height: "100%",
-            objectFit: "cover",
-            scale: scale,
+            objectFit: "contain",
+            scale,
           }}
         />
       </div>
     );
   }
 
-  // Se não existe, busca fallback configurado no mapeamento ou prop
   const mapping = VIDEO_ASSET_MAP[src];
   const resolvedImage = fallbackImage || mapping?.fallbackImage;
   const displayLabel = label || mapping?.label || src;
   const displaySpecs = mapping?.specs || "1080p • 60fps • Proporção 16:9";
+  const showOverlay = isPlaceholderOverlayEnabled();
 
-  // Efeito Ken Burns sutil para dar vida ao print estático
-  const kenBurnsScale = interpolate(frame, [0, 600], [1.0, 1.05], {
+  // Ken Burns proporcional à duração real da cena: o movimento nunca "congela".
+  const total = Math.max(1, durationInFrames ?? localDuration);
+  const progress = interpolate(frame, [0, total], [0, 1], {
     extrapolateRight: "clamp",
     extrapolateLeft: "clamp",
   });
-
-  const subtlePanY = interpolate(frame, [0, 600], [0, -10], {
+  const kenBurnsScale = kenBurns ? 1.02 + progress * 0.04 : 1;
+  const panY = kenBurns ? interpolate(frame, [0, total], [0, -8], {
     extrapolateRight: "clamp",
     extrapolateLeft: "clamp",
-  });
+  }) : 0;
 
   if (resolvedImage) {
     return (
       <div
         className={`relative w-full h-full overflow-hidden select-none ${className}`}
-        style={{
-          ...style,
-          backgroundColor: THEME.colors.bg,
-        }}
+        style={{ ...style, backgroundColor: "#000" }}
       >
-        {/* Screenshot real do app com leve movimento de câmera */}
         <div
           className="w-full h-full"
           style={{
             scale: scale * kenBurnsScale,
-            translate: `0px ${subtlePanY}px`,
+            translate: `0px ${panY}px`,
           }}
         >
           <Img
             src={staticFile(resolvedImage)}
-            className="w-full h-full object-cover object-top"
+            className="w-full h-full object-contain"
           />
         </div>
 
-        {/* Badge discreto indicando modo de prévia / gravação futura */}
-        <div className="absolute top-4 right-4 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#08130F]/85 border border-emerald-500/40 backdrop-blur-md shadow-lg">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-          </span>
-          <span className="text-[11px] font-mono tracking-wide text-emerald-300">
-            PRÉVIA: {displayLabel}
-          </span>
-        </div>
+        {showOverlay ? (
+          <>
+            <div className="absolute top-4 right-4 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#08130F]/85 border border-emerald-500/40 shadow-lg">
+              <span
+                className="relative flex h-2.5 w-2.5 items-center justify-center"
+                style={{ opacity: 0.5 + 0.5 * Math.sin(frame / 6) }}
+              >
+                <span className="absolute h-full w-full rounded-full bg-emerald-400/50" />
+                <span className="relative h-2 w-2 rounded-full bg-emerald-400" />
+              </span>
+              <span className="text-[11px] font-mono tracking-wide text-emerald-300">
+                PRÉVIA: {displayLabel}
+              </span>
+            </div>
 
-        {/* Rodapé sutil com o caminho do arquivo esperado */}
-        <div className="absolute bottom-3 right-4 z-20 px-2.5 py-1 rounded bg-[#08130F]/90 border border-emerald-500/20 text-[10px] font-mono text-slate-400 backdrop-blur-sm">
-          Aguardando: <span className="text-emerald-400">{src}</span>
-        </div>
+            <div className="absolute bottom-3 right-4 z-20 px-2.5 py-1 rounded bg-[#08130F]/90 border border-emerald-500/20 text-[10px] font-mono text-slate-400">
+              Aguardando: <span className="text-emerald-400">{src}</span>
+            </div>
+          </>
+        ) : null}
       </div>
     );
   }
 
-  // Placeholder visual Dark Tech caso não haja nem vídeo nem imagem de fallback
+  // Placeholder visual Dark Tech quando não há vídeo nem print de fallback.
+  const pulse = spring({
+    frame: frame % Math.round(fps * 1.6),
+    fps,
+    config: { damping: 12, stiffness: 90 },
+  });
+
   return (
     <div
       className={`relative w-full h-full flex flex-col items-center justify-center p-8 overflow-hidden ${className}`}
       style={{
         ...style,
         backgroundColor: THEME.colors.bg,
-        backgroundImage: `radial-gradient(circle at center, rgba(16, 185, 129, 0.08) 0%, transparent 70%)`,
+        backgroundImage:
+          "radial-gradient(circle at center, rgba(16, 185, 129, 0.08) 0%, transparent 70%)",
       }}
     >
-      {/* Grid de fundo */}
       <div
         className="absolute inset-0 opacity-15 pointer-events-none"
         style={{
-          backgroundImage: `linear-gradient(to right, #10B981 1px, transparent 1px), linear-gradient(to bottom, #10B981 1px, transparent 1px)`,
+          backgroundImage:
+            "linear-gradient(to right, #10B981 1px, transparent 1px), linear-gradient(to bottom, #10B981 1px, transparent 1px)",
           backgroundSize: "40px 40px",
         }}
       />
 
-      {/* Ícone com pulso tecnológico */}
       <div className="relative mb-5 flex items-center justify-center">
         <div
-          className="absolute w-20 h-20 rounded-full bg-emerald-500/20 blur-xl animate-pulse"
+          className="absolute w-20 h-20 rounded-full bg-emerald-500/20 blur-xl"
+          style={{ scale: 0.9 + pulse * 0.25, opacity: 0.5 + pulse * 0.4 }}
         />
         <div className="w-16 h-16 rounded-2xl bg-[#0F1F19] border border-emerald-500/40 flex items-center justify-center shadow-lg shadow-emerald-950/50">
           <svg
@@ -158,7 +182,6 @@ export const SafeVideo: React.FC<SafeVideoProps> = ({
         </div>
       </div>
 
-      {/* Título do placeholder */}
       <div className="text-center z-10 max-w-md">
         <h3 className="text-lg font-semibold text-slate-100 mb-1 tracking-tight">
           {displayLabel}
@@ -167,8 +190,7 @@ export const SafeVideo: React.FC<SafeVideoProps> = ({
           Espaço reservado para gravação de tela
         </p>
 
-        {/* Card de especificações técnicas */}
-        <div className="inline-flex flex-col gap-1.5 px-4 py-2.5 rounded-lg bg-[#0F1F19]/90 border border-emerald-500/30 text-left font-mono text-[11px] backdrop-blur-md">
+        <div className="inline-flex flex-col gap-1.5 px-4 py-2.5 rounded-lg bg-[#0F1F19]/90 border border-emerald-500/30 text-left font-mono text-[11px]">
           <div className="text-slate-400 flex items-center justify-between gap-6">
             <span>Arquivo esperado:</span>
             <span className="text-emerald-400 font-bold">{src}</span>

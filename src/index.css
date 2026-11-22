@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+/* Fontes auto-hospedadas: os arquivos são carregados por src/config/fonts.ts
+   e aqui só mapeamos os tokens do Tailwind para elas. */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}

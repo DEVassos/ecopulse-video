@@ -1,6 +1,14 @@
 import React from "react";
-import { AbsoluteFill, Series, useVideoConfig } from "remotion";
-import { getSceneDurationInFrames } from "./config/timeline";
+import { AbsoluteFill, interpolate, useVideoConfig } from "remotion";
+import { TransitionSeries, linearTiming } from "@remotion/transitions";
+import { fade } from "@remotion/transitions/fade";
+
+import {
+  type SceneKey,
+  TIMELINE_CONFIG,
+  getSceneDurationInFrames,
+  getSceneSlots,
+} from "./config/timeline";
 import { THEME } from "./config/theme";
 import { SafeAudio } from "./components/SafeAudio";
 
@@ -12,78 +20,98 @@ import { Cena5Report } from "./scenes/Cena5Report";
 import { Cena6Help } from "./scenes/Cena6Help";
 import { Cena7Outro } from "./scenes/Cena7Outro";
 
+const SCENE_COMPONENTS = {
+  cena1: Cena1Hook,
+  cena2: Cena2Map,
+  cena3: Cena3Emissions,
+  cena4: Cena4Compare,
+  cena5: Cena5Report,
+  cena6: Cena6Help,
+  cena7: Cena7Outro,
+} as const;
+
+const MUSIC_BASE_VOLUME = 0.1;
+const MUSIC_DUCKED_VOLUME = 0.035;
+const MUSIC_DUCK_RAMP_FRAMES = 14;
+const MUSIC_FADE_IN_SECONDS = 1.2;
+const MUSIC_FADE_OUT_SECONDS = 2;
+
 /**
- * EcoPulse Main Composition
- * Encadeia as 7 cenas usando <Series> e <Series.Sequence>,
- * convertendo os segundos de src/config/timeline.ts em frames.
- * Inclui trilha sonora global em loop com volume atenuado.
+ * EcoPulse - Composição principal
+ *
+ * As cenas são encadeadas por <TransitionSeries> com crossfade curto. A trilha
+ * fica fora da série (é contínua) e abaixa sozinha enquanto há narração, o que
+ * evita disputar atenção com a locução.
  */
-export const EcoPulseComposition: React.FC = () => {
-  const { fps } = useVideoConfig();
+export interface EcoPulseCompositionProps {
+  /** Subconjunto de cenas a renderizar (usado pela versão curta de estande). */
+  scenes: readonly SceneKey[];
+}
+
+export const EcoPulseComposition: React.FC<EcoPulseCompositionProps> = ({
+  scenes,
+}) => {
+  const { fps, durationInFrames } = useVideoConfig();
+  const slots = getSceneSlots(scenes, fps);
+
+  const musicVolume = (frame: number): number => {
+    const duck = slots.reduce((highest, slot) => {
+      const start = slot.startFrame;
+      const end = start + slot.narrationInFrames;
+      const ramp = interpolate(
+        frame,
+        [
+          start,
+          start + MUSIC_DUCK_RAMP_FRAMES,
+          end - MUSIC_DUCK_RAMP_FRAMES,
+          end,
+        ],
+        [0, 1, 1, 0],
+        { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+      );
+      return Math.max(highest, ramp);
+    }, 0);
+
+    return (
+      MUSIC_BASE_VOLUME +
+      duck * (MUSIC_DUCKED_VOLUME - MUSIC_BASE_VOLUME)
+    );
+  };
 
   return (
     <AbsoluteFill style={{ backgroundColor: THEME.colors.bg }}>
-      {/* Trilha Sonora Global em Loop com Volume 0.12 */}
-      <SafeAudio src="audio/bg_music.mp3" volume={0.12} loop />
+      <SafeAudio
+        src="audio/bg_music.mp3"
+        volume={musicVolume}
+        loop
+        fadeInSeconds={MUSIC_FADE_IN_SECONDS}
+        fadeOutSeconds={MUSIC_FADE_OUT_SECONDS}
+        durationInFrames={durationInFrames}
+      />
 
-      {/* Sequência Contínua das 7 Cenas */}
-      <Series>
-        {/* Cena 1: O Gancho */}
-        <Series.Sequence
-          name="Cena 1 - O Gancho"
-          durationInFrames={getSceneDurationInFrames("cena1", fps)}
-        >
-          <Cena1Hook />
-        </Series.Sequence>
-
-        {/* Cena 2: O Mapa e Simulação */}
-        <Series.Sequence
-          name="Cena 2 - O Mapa e Simulação"
-          durationInFrames={getSceneDurationInFrames("cena2", fps)}
-        >
-          <Cena2Map />
-        </Series.Sequence>
-
-        {/* Cena 3: Investigação */}
-        <Series.Sequence
-          name="Cena 3 - Investigação"
-          durationInFrames={getSceneDurationInFrames("cena3", fps)}
-        >
-          <Cena3Emissions />
-        </Series.Sequence>
-
-        {/* Cena 4: Comparação e Causa Raiz */}
-        <Series.Sequence
-          name="Cena 4 - Comparação e Causa Raiz"
-          durationInFrames={getSceneDurationInFrames("cena4", fps)}
-        >
-          <Cena4Compare />
-        </Series.Sequence>
-
-        {/* Cena 5: Relatórios e PDF */}
-        <Series.Sequence
-          name="Cena 5 - Relatórios e PDF"
-          durationInFrames={getSceneDurationInFrames("cena5", fps)}
-        >
-          <Cena5Report />
-        </Series.Sequence>
-
-        {/* Cena 6: Maturidade e Transparência */}
-        <Series.Sequence
-          name="Cena 6 - Maturidade e Transparência"
-          durationInFrames={getSceneDurationInFrames("cena6", fps)}
-        >
-          <Cena6Help />
-        </Series.Sequence>
-
-        {/* Cena 7: Fechamento */}
-        <Series.Sequence
-          name="Cena 7 - Fechamento"
-          durationInFrames={getSceneDurationInFrames("cena7", fps)}
-        >
-          <Cena7Outro />
-        </Series.Sequence>
-      </Series>
+      <TransitionSeries>
+        {scenes.map((key, index) => {
+          const SceneComponent = SCENE_COMPONENTS[key];
+          return (
+            <React.Fragment key={key}>
+              <TransitionSeries.Sequence
+                name={TIMELINE_CONFIG.scenes[key].label}
+                durationInFrames={getSceneDurationInFrames(key, fps)}
+              >
+                <SceneComponent />
+              </TransitionSeries.Sequence>
+              {index < scenes.length - 1 ? (
+                <TransitionSeries.Transition
+                  presentation={fade()}
+                  timing={linearTiming({
+                    durationInFrames: TIMELINE_CONFIG.transitionInFrames,
+                  })}
+                />
+              ) : null}
+            </React.Fragment>
+          );
+        })}
+      </TransitionSeries>
     </AbsoluteFill>
   );
 };

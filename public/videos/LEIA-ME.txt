@@ -1,0 +1,4 @@
+Coloque aqui as gravações de tela (.mp4) e rode `npm run scan`.
+Nomes esperados: 01_globe_rotation, 02_globe_zoom, 03_simulation_reveal,
+04_emissions_chart, 05_compare_services, 06_compare_scatter,
+07_report_pareto, 08_help_formulas.

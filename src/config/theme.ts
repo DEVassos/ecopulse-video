@@ -4,6 +4,11 @@
  */
 
 export const THEME = {
+  fonts: {
+    // Fontes auto-hospedadas em public/fonts (ver src/config/fonts.ts)
+    sans: '"Inter", ui-sans-serif, system-ui, sans-serif',
+    mono: '"JetBrains Mono", ui-monospace, monospace',
+  },
   colors: {
     // Fundo Principal
     bg: "#08130F",
