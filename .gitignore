@@ -42,3 +42,6 @@ Thumbs.db
 .claude/
 .agents/
 skills-lock.json
+
+# PID do Remotion Studio em background (npm run studio:start)
+.studio.pid
