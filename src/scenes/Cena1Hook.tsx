@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  AbsoluteFill,
   Sequence,
   spring,
   interpolate,
@@ -10,16 +11,111 @@ import {
 import { THEME } from "../config/theme";
 import { FULL_SCREEN_WIDTH } from "../config/layout";
 import {
+  CENA1_BADGE_SECONDS,
   CENA1_CAPTIONS,
   CENA1_CLIPS,
   CENA1_HOOK_BEATS,
-  CENA1_HOOK_END,
+  CENA1_HOOK_END_SECONDS,
+  CENA1_INTRO_SECONDS,
+  type Cena1Clip,
 } from "../config/timeline";
 import { SceneShell } from "../components/SceneShell";
 import { BrowserFrame } from "../components/BrowserFrame";
 import { SafeVideo } from "../components/SafeVideo";
 
 const CAPTION_FADE = 10;
+
+/** Duração do "chicote" (whip) nas trocas entre telas e na virada para a cena 2. */
+const WHIP_FRAMES = 16;
+
+/**
+ * Trecho de gravação com entrada/saída em whip pan (desliza + desfoca + some),
+ * para que a troca Home -> login não seja um corte seco.
+ */
+const ClipLayer: React.FC<{
+  clip: Cena1Clip;
+  playbackRate: number;
+}> = ({ clip, playbackRate }) => {
+  const frame = useCurrentFrame();
+  const { durationInFrames, fps } = useVideoConfig();
+
+  const enter = clip.enter
+    ? interpolate(frame, [0, WHIP_FRAMES], [0, 1], {
+        extrapolateRight: "clamp",
+        easing: Easing.bezier(0.16, 1, 0.3, 1),
+      })
+    : 1;
+
+  const exit = clip.exit
+    ? interpolate(
+        frame,
+        [durationInFrames - WHIP_FRAMES, durationInFrames - 1],
+        [0, 1],
+        {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: Easing.bezier(0.7, 0, 0.84, 0),
+        }
+      )
+    : 0;
+
+  // 0.15 de opacidade no ponto de encontro dos dois lados: o cruzamento
+  // acontece sob a faixa de luz do `WhipStreak`, sem buraco preto.
+  const opacity = (0.15 + 0.85 * enter) * (1 - 0.85 * exit);
+
+  return (
+    <AbsoluteFill
+      style={{
+        opacity,
+        translate: `${(1 - enter) * 130 - exit * 130}px 0px`,
+        scale: 1 + (1 - enter) * 0.03 + exit * 0.03,
+        filter: `blur(${(1 - enter) * 9 + exit * 9}px)`,
+      }}
+    >
+      <SafeVideo
+        src={clip.src}
+        trimBefore={Math.round(clip.startSeconds * fps)}
+        playbackRate={playbackRate}
+        volume={0}
+        kenBurns={false}
+        label={clip.src}
+        className="w-full h-full"
+      />
+    </AbsoluteFill>
+  );
+};
+
+/** Faixa de luz que cruza a tela durante o whip, escondendo o cruzamento. */
+const WhipStreak: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+
+  const mid = durationInFrames / 2;
+  const sweep = interpolate(frame, [0, durationInFrames], [-35, 135], {
+    easing: Easing.inOut(Easing.quad),
+  });
+  const intensity = interpolate(
+    frame,
+    [mid - 5, mid, mid + 5],
+    [0, 1, 0],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+  );
+
+  return (
+    <AbsoluteFill style={{ pointerEvents: "none" }}>
+      <AbsoluteFill
+        style={{
+          backgroundImage: `linear-gradient(105deg, transparent ${sweep - 24}%, rgba(16,185,129,${
+            0.1 + 0.2 * intensity
+          }) ${sweep}%, transparent ${sweep + 24}%)`,
+        }}
+      />
+      <AbsoluteFill
+        style={{ backgroundColor: "#eafff5", opacity: intensity * 0.16 }}
+      />
+    </AbsoluteFill>
+  );
+};
 
 const Highlighted: React.FC<{ text: string; highlight: string }> = ({
   text,
@@ -133,34 +229,29 @@ export const Cena1Hook: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
 
-  const hookEndFrame = Math.round(durationInFrames * CENA1_HOOK_END);
+  const toFrame = (seconds: number) => Math.round(seconds * fps);
 
-  const blocks = CENA1_CLIPS.map((clip, index) => {
-    const from = Math.round(durationInFrames * clip.from);
-    const to =
-      index === CENA1_CLIPS.length - 1
-        ? durationInFrames
-        : Math.round(durationInFrames * CENA1_CLIPS[index + 1].from);
+  const hookEndFrame = toFrame(CENA1_HOOK_END_SECONDS);
 
-    return {
-      clip,
-      from,
-      frames: to - from,
-      playbackRate:
-        (clip.endSeconds - clip.startSeconds) / ((to - from) / fps),
-    };
+  // O plano está em segundos reais: o playbackRate só existe para caber o
+  // trecho na janela de tempo definida em `Cena1Clip.speed`.
+  const blocks = CENA1_CLIPS.map((clip) => {
+    const from = toFrame(clip.atSeconds);
+    const to = toFrame(clip.atSeconds + (clip.endSeconds - clip.startSeconds) / clip.speed);
+
+    return { clip, from, frames: to - from, playbackRate: clip.speed };
   });
 
   const activeBlock =
-    blocks.find((block) => frame < block.from + block.frames) ?? blocks[0];
+    [...blocks].reverse().find((block) => frame >= block.from) ?? blocks[0];
 
   const lastBlock = blocks[blocks.length - 1];
-  const pushInStart = lastBlock.from + lastBlock.frames * 0.55;
+  const pushInStart = lastBlock.from + lastBlock.frames * 0.4;
 
   const pushInScale = interpolate(
     frame,
     [pushInStart, durationInFrames],
-    [1, 1.14],
+    [1, 1.12],
     {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
@@ -170,7 +261,7 @@ export const Cena1Hook: React.FC = () => {
 
   // Entrada das gravações (sobe + escala + fade) quando a pergunta termina.
   const stageIn = spring({
-    frame: frame - (hookEndFrame - 4),
+    frame: frame - (hookEndFrame - 6),
     fps,
     config: { damping: 16, stiffness: 110, mass: 0.9 },
   });
@@ -178,20 +269,27 @@ export const Cena1Hook: React.FC = () => {
   // Saída da abertura (recua + desfoca + some).
   const hookOut = interpolate(
     frame,
-    [hookEndFrame - 12, hookEndFrame + 2],
+    [hookEndFrame - 14, hookEndFrame + 2],
     [0, 1],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
 
   const badgeSpring = spring({
-    frame: frame - Math.round(durationInFrames * 0.83),
+    frame: frame - toFrame(CENA1_BADGE_SECONDS),
     fps,
     config: { damping: 14, stiffness: 90 },
   });
 
   const pulse = 0.5 + 0.5 * Math.sin((frame / fps) * Math.PI * 2);
 
-  const popupStart = Math.round(durationInFrames * CENA1_HOOK_BEATS[1].from);
+  const popupStart = toFrame(CENA1_HOOK_BEATS[1].atSeconds);
+
+  // O selo entra depois de um segundo de tela limpa (só o fundo da marca).
+  const brandIn = spring({
+    frame: frame - toFrame(CENA1_INTRO_SECONDS),
+    fps,
+    config: { damping: 18, stiffness: 90, mass: 0.8 },
+  });
 
   return (
     <SceneShell sceneKey="cena1" showHeader={false}>
@@ -211,6 +309,10 @@ export const Cena1Hook: React.FC = () => {
           style={{
             borderColor: THEME.colors.borderSubtle,
             backgroundColor: THEME.colors.surfaceGlassSubtle,
+            opacity: brandIn,
+            scale: interpolate(brandIn, [0, 1], [0.9, 1]),
+            translate: `0px ${interpolate(brandIn, [0, 1], [14, 0])}px`,
+            filter: `blur(${interpolate(brandIn, [0, 1], [8, 0])}px)`,
           }}
         >
           <span
@@ -223,7 +325,7 @@ export const Cena1Hook: React.FC = () => {
         </div>
 
         {CENA1_HOOK_BEATS.map((beat, index) => {
-          const start = Math.round(durationInFrames * beat.from) + 4;
+          const start = toFrame(beat.atSeconds) + 4;
           const isQuestion = index === 1;
 
           return (
@@ -282,7 +384,7 @@ export const Cena1Hook: React.FC = () => {
       })}
 
       {/* ---------------------------------------------------------------
-          Gravações reais: Home -> login -> digitação + clique em "Entrar"
+          Gravações reais: Home -> login (digitação inteira) -> dashboard
       ----------------------------------------------------------------- */}
       <div
         className="relative"
@@ -304,17 +406,22 @@ export const Cena1Hook: React.FC = () => {
               from={from}
               durationInFrames={frames}
             >
-              <SafeVideo
-                src={clip.src}
-                trimBefore={Math.round(clip.startSeconds * fps)}
-                playbackRate={playbackRate}
-                volume={0}
-                kenBurns={false}
-                label={clip.src}
-                className="w-full h-full"
-              />
+              <ClipLayer clip={clip} playbackRate={playbackRate} />
             </Sequence>
           ))}
+
+          {/* Whip na troca Home -> login */}
+          {blocks.map(({ clip, from }) =>
+            clip.enter === "whip" ? (
+              <Sequence
+                key={`whip-${clip.startSeconds}`}
+                from={from - WHIP_FRAMES}
+                durationInFrames={WHIP_FRAMES * 2}
+              >
+                <WhipStreak />
+              </Sequence>
+            ) : null
+          )}
         </BrowserFrame>
 
         <div
@@ -326,8 +433,8 @@ export const Cena1Hook: React.FC = () => {
         >
           <div className="relative h-[132px]">
             {CENA1_CAPTIONS.map((caption) => {
-              const inFrame = Math.round(durationInFrames * caption.from);
-              const outFrame = Math.round(durationInFrames * caption.to);
+              const inFrame = toFrame(caption.atSeconds);
+              const outFrame = toFrame(caption.untilSeconds);
 
               const opacity = interpolate(
                 frame,

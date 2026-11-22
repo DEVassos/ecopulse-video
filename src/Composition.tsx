@@ -32,12 +32,15 @@ const SCENE_COMPONENTS = {
 
 /**
  * `audio/musica_de_fundo.mp3` é uma masterização quente (RMS ~-11,6 dBFS,
- * ~10 dB acima da narração). Por isso os volumes abaixo são baixos: 0,14 dá
- * ~-28,7 dBFS de leito e 0,03 deixa a trilha ~-42 dBFS durante a locução.
+ * ~10 dB acima da narração). Os volumes abaixo são relativos a isso: 0,26 dá
+ * ~-23 dBFS de leito (audível sem competir com a voz) e 0,10 deixa a trilha
+ * ~-32 dBFS durante a locução.
  */
 const MUSIC_FILE = "audio/musica_de_fundo.mp3";
-const MUSIC_BASE_VOLUME = 0.14;
-const MUSIC_DUCKED_VOLUME = 0.03;
+const MUSIC_BASE_VOLUME = 0.26;
+/** Pico da trilha nas janelas sem locução (respiro entre uma cena e a próxima). */
+const MUSIC_LIFT_VOLUME = 0.44;
+const MUSIC_DUCKED_VOLUME = 0.1;
 const MUSIC_DUCK_RAMP_FRAMES = 14;
 const MUSIC_FADE_IN_SECONDS = 1.2;
 const MUSIC_FADE_OUT_SECONDS = 2;
@@ -78,10 +81,30 @@ export const EcoPulseComposition: React.FC<EcoPulseCompositionProps> = ({
       return Math.max(highest, ramp);
     }, 0);
 
-    return (
-      MUSIC_BASE_VOLUME +
-      duck * (MUSIC_DUCKED_VOLUME - MUSIC_BASE_VOLUME)
-    );
+    // Respiro: entre o fim da locução e a próxima cena a trilha sobe e desce,
+    // marcando a virada sem precisar de efeito sonoro.
+    const lift = slots.reduce((highest, slot) => {
+      const gapStart = slot.startFrame + slot.narrationInFrames;
+      const gapEnd =
+        slot.startFrame + slot.durationInFrames - TIMELINE_CONFIG.transitionInFrames;
+
+      if (gapEnd - gapStart < 40) {
+        return highest;
+      }
+
+      const ramp = interpolate(
+        frame,
+        [gapStart + 18, gapStart + 60, gapEnd - 24, gapEnd],
+        [0, 1, 1, 0],
+        { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+      );
+
+      return Math.max(highest, ramp);
+    }, 0);
+
+    const bed = MUSIC_BASE_VOLUME + duck * (MUSIC_DUCKED_VOLUME - MUSIC_BASE_VOLUME);
+
+    return bed + lift * (MUSIC_LIFT_VOLUME - bed);
   };
 
   return (
