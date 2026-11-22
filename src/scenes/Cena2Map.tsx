@@ -1,48 +1,129 @@
 import React from "react";
 import {
+  AbsoluteFill,
+  Sequence,
+  interpolate,
+  spring,
   useCurrentFrame,
   useVideoConfig,
-  spring,
-  interpolate,
 } from "remotion";
 import { THEME } from "../config/theme";
 import { FULL_SCREEN_WIDTH } from "../config/layout";
-import { CENA2_MOMENTS } from "../config/timeline";
+import {
+  CENA2_CLIPS,
+  CENA2_SIMULATION_SECONDS,
+  Cena2Clip,
+  clipSeconds,
+} from "../config/timeline";
 import { SceneShell } from "../components/SceneShell";
 import { BrowserFrame } from "../components/BrowserFrame";
 import { SafeVideo } from "../components/SafeVideo";
 
+/** Frames de varredura verde em cada corte entre um trecho e o próximo. */
+const CUT_FLASH_FRAMES = 12;
+
+/** Moldura de escala de cada trecho: o globo abre devagar, o card fecha o plano. */
+const CLIP_PUSH: readonly (readonly [number, number])[] = [
+  [1.0, 1.15],
+  [1.02, 1.08],
+  [1.0, 1.12],
+];
+
+const ClipLayer: React.FC<{ clip: Cena2Clip; index: number }> = ({
+  clip,
+  index,
+}) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  const localFrames = Math.round(clipSeconds(clip) * fps);
+  const [from, to] = CLIP_PUSH[index] ?? [1, 1];
+  const push = interpolate(frame, [0, localFrames], [from, to], {
+    extrapolateRight: "clamp",
+  });
+
+  // No trecho da simulação o push acompanha o card no canto inferior direito.
+  const focus =
+    index === CLIP_PUSH.length - 1
+      ? interpolate(frame, [localFrames * 0.45, localFrames], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        })
+      : 0;
+
+  return (
+    <AbsoluteFill>
+      <SafeVideo
+        src={clip.src}
+        label={clip.legend}
+        trimBefore={Math.round(clip.startSeconds * fps)}
+        playbackRate={1}
+        volume={0}
+        kenBurns={false}
+        scale={push}
+        style={{ translate: `${-46 * focus}px ${-34 * focus}px` }}
+        className="w-full h-full"
+      />
+    </AbsoluteFill>
+  );
+};
+
+/** Varredura de luz verde marcando a troca de trecho (mesma linguagem da cena 1). */
+const CutFlash: React.FC<{ atFrame: number }> = ({ atFrame }) => {
+  const frame = useCurrentFrame();
+  const local = frame - atFrame;
+
+  if (local < 0 || local > CUT_FLASH_FRAMES) return null;
+
+  const progress = local / CUT_FLASH_FRAMES;
+
+  return (
+    <div
+      className="absolute inset-0 z-10 pointer-events-none"
+      style={{
+        opacity: interpolate(progress, [0, 0.25, 1], [0, 0.55, 0]),
+        background:
+          "linear-gradient(105deg, transparent 30%, #d8fff0 48%, #34d399 52%, transparent 70%)",
+        translate: `${interpolate(progress, [0, 1], [-30, 30])}% 0px`,
+        scale: 1.1,
+      }}
+    />
+  );
+};
+
 /**
- * Cena 2 - O Mapa e Simulação
- * A cena é dividida em 3 momentos (rotação do globo, zoom regional e
- * revelação da simulação). As fronteiras são frações da duração da cena, então
- * acompanham qualquer mudança na narração.
+ * Cena 2 - O Mapa e a Simulação.
+ * Os três trechos são encaixados pelo plano em segundos absolutos definido em
+ * `CENA2_CLIPS`, cortando nas pausas reais da narração.
  */
 export const Cena2Map: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
 
-  const rotationEnd = Math.round(durationInFrames * CENA2_MOMENTS.globeRotation);
-  const zoomEnd = rotationEnd + Math.round(durationInFrames * CENA2_MOMENTS.globeZoom);
-  const badgeStart = zoomEnd + 12;
+  const bounds = CENA2_CLIPS.map((clip) => ({
+    start: Math.round(clip.atSeconds * fps),
+    length: Math.round(clipSeconds(clip) * fps),
+  }));
 
-  const moment1Scale = interpolate(frame, [0, rotationEnd], [1.0, 1.1], {
-    extrapolateRight: "clamp",
-    extrapolateLeft: "clamp",
-  });
+  const activeIndex = CENA2_CLIPS.reduce(
+    (current, _clip, index) => (frame >= bounds[index].start ? index : current),
+    0
+  );
 
+  const badgeStart = Math.round(CENA2_SIMULATION_SECONDS * fps) + 24;
   const badgeSpring = spring({
     frame: frame - badgeStart,
     fps,
     config: { damping: 14, stiffness: 100 },
   });
 
-  const legend =
-    frame < rotationEnd
-      ? "● Telemetria Multirregional Ativa (AWS, GCP, Azure)"
-      : frame < zoomEnd
-        ? "● Análise de Carga & Intensidade de Carbono da Rede Elétrica"
-        : "● Simulação de Migração para Região Mais Limpa";
+  // Respiro final: o plano já entregou o resultado, a cena apenas fecha.
+  const outro = interpolate(
+    frame,
+    [durationInFrames - 18, durationInFrames],
+    [0, 1],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+  );
 
   return (
     <SceneShell sceneKey="cena2">
@@ -51,39 +132,32 @@ export const Cena2Map: React.FC = () => {
         url="app.ecopulse.greenops.io/dashboard/map"
         title="EcoPulse • Global Carbon Mesh"
       >
-        {frame < rotationEnd ? (
-          <SafeVideo
-            src="videos/01_globe_rotation.mp4"
-            label="01 - Rotação do Globo 3D"
-            scale={moment1Scale}
-            kenBurns={false}
-            className="w-full h-full"
-          />
-        ) : frame < zoomEnd ? (
-          <SafeVideo
-            src="videos/02_globe_zoom.mp4"
-            label="02 - Foco em Datacenter Regional"
-            className="w-full h-full"
-          />
-        ) : (
-          <SafeVideo
-            src="videos/03_simulation_reveal.mp4"
-            label="03 - Painel de Simulação"
-            className="w-full h-full"
-          />
-        )}
+        {CENA2_CLIPS.map((clip, index) => (
+          <Sequence
+            key={clip.src}
+            from={bounds[index].start}
+            durationInFrames={bounds[index].length}
+          >
+            <ClipLayer clip={clip} index={index} />
+          </Sequence>
+        ))}
 
-        {/* Legenda do momento atual */}
-        <div className="absolute bottom-6 left-6 z-20 px-4 py-2 rounded-lg bg-[#0F1F19]/90 border border-emerald-500/30 text-xs font-mono text-emerald-300">
-          {legend}
+        {bounds.slice(1).map((bound) => (
+          <CutFlash key={`flash-${bound.start}`} atFrame={bound.start} />
+        ))}
+
+        <div
+          className="absolute bottom-6 left-6 z-20 px-4 py-2 rounded-lg bg-[#0F1F19]/90 border border-emerald-500/30 text-xs font-mono text-emerald-300"
+          style={{ opacity: interpolate(outro, [0, 1], [1, 0]) }}
+        >
+          {CENA2_CLIPS[activeIndex].legend}
         </div>
 
-        {/* Badge da recomendação, só na revelação da simulação */}
         {frame >= badgeStart ? (
           <div
             className="absolute bottom-6 right-6 z-30 flex items-center gap-4 px-5 py-3 rounded-2xl bg-[#08130F]/95 border-2 border-emerald-400/80"
             style={{
-              opacity: badgeSpring,
+              opacity: badgeSpring * interpolate(outro, [0, 1], [1, 0]),
               scale: interpolate(badgeSpring, [0, 1], [0.8, 1]),
               translate: `0px ${interpolate(badgeSpring, [0, 1], [40, 0])}px`,
               boxShadow: THEME.shadows.glow,

@@ -6,5 +6,8 @@
 /** Arquivos .mp4 realmente presentes em public/videos/ */
 export const RECORDED_VIDEOS: readonly string[] = [
   "videos/00_home_to_login.mp4",
-  "videos/01_login_typing.mp4"
+  "videos/01_login_typing.mp4",
+  "videos/02_globe_rotation.mp4",
+  "videos/03_globe_zoom.mp4",
+  "videos/04_simulation_reveal.mp4"
 ];

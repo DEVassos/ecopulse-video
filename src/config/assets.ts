@@ -25,6 +25,24 @@ export const VIDEO_ASSET_MAP: Record<string, VideoAssetMapping> = {
     label: "Login Corporativo",
     specs: "1080p • 60fps • Digitação e acesso",
   },
+  "videos/02_globe_rotation.mp4": {
+    videoFile: "videos/02_globe_rotation.mp4",
+    fallbackImage: "images/dashboard 1.png",
+    label: "Rotação do Globo 3D",
+    specs: "1080p • 60fps • Rotação suave",
+  },
+  "videos/03_globe_zoom.mp4": {
+    videoFile: "videos/03_globe_zoom.mp4",
+    fallbackImage: "images/dashboard 3.png",
+    label: "Zoom e Foco em Datacenter",
+    specs: "1080p • 60fps • Zoom-in regional",
+  },
+  "videos/04_simulation_reveal.mp4": {
+    videoFile: "videos/04_simulation_reveal.mp4",
+    fallbackImage: "images/dashboard 4.png",
+    label: "Simulação e Alternativa Limpa",
+    specs: "1080p • 60fps • Painel de simulação",
+  },
   "videos/01_globe_rotation.mp4": {
     videoFile: "videos/01_globe_rotation.mp4",
     fallbackImage: "images/dashboard 1.png",

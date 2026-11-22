@@ -190,6 +190,83 @@ export const CENA1_CAPTIONS: readonly Cena1Caption[] = [
 /** Segundo em que entra o selo "Bem-vindos ao GreenOps na prática". */
 export const CENA1_BADGE_SECONDS = 15.9;
 
+/* ---------------------------------------------------------------------------
+ * CENA 2 - o mapa e a simulação, também em SEGUNDOS ABSOLUTOS
+ *
+ * Cortes tirados das pausas reais da narração (`cena2.mp3`, 27,56s):
+ * - 2,08–2,56  "Tudo começa com a visão global." -> "Enquanto dashboards..."
+ * - 8,56–8,80  "...imagens de satélite reais." -> "Cada ponto representa..."
+ * - 11,12–11,44 "Cada ponto representa uma região ativa." -> "Navegue pelo globo..."
+ * - 20,40–20,64 "instantaneamente." -> "E já aponta a alternativa mais limpa..."
+ *
+ * O roteiro manda cortar para o zoom na fala "Navegue pelo globo..." e para a
+ * simulação na pausa dramática, então os cortes caem em 11,44s e 20,40s.
+ * ------------------------------------------------------------------------- */
+
+export interface Cena2Clip {
+  src: string;
+  /** Início do trecho no arquivo original. */
+  startSeconds: number;
+  /** Fim do trecho no arquivo original. */
+  endSeconds: number;
+  /** Segundo da cena em que o trecho entra. */
+  atSeconds: number;
+  /** Rótulo do momento (aparece na legenda inferior). */
+  legend: string;
+}
+
+const CENA2_SIMULATION_AT = 20.4;
+
+export const CENA2_CLIPS: readonly Cena2Clip[] = [
+  {
+    // Globo girando enquanto a narração apresenta a visão global.
+    src: "videos/02_globe_rotation.mp4",
+    startSeconds: 0,
+    endSeconds: 11.44,
+    atSeconds: 0,
+    legend: "● Telemetria Multirregional Ativa (AWS, GCP, Azure)",
+  },
+  {
+    // "Navegue pelo globo, dê zoom e clique em um data center."
+    src: "videos/03_globe_zoom.mp4",
+    startSeconds: 0,
+    endSeconds: 8.96,
+    atSeconds: 11.44,
+    legend: "● Análise de Carga & Intensidade de Carbono da Rede Elétrica",
+  },
+  {
+    // Pausa dramática: o trecho final do arquivo é o que mostra o card de 86,44%.
+    src: "videos/04_simulation_reveal.mp4",
+    startSeconds: 14.2,
+    endSeconds: 22.12,
+    atSeconds: CENA2_SIMULATION_AT,
+    legend: "● Simulação de Migração para Região Mais Limpa",
+  },
+] as const;
+
+/** Segundo em que a simulação começa (usado pelo badge de recomendação). */
+export const CENA2_SIMULATION_SECONDS = CENA2_SIMULATION_AT;
+
+/** Duração em segundos do trecho de um clipe do plano. */
+export const clipSeconds = (clip: { startSeconds: number; endSeconds: number }) =>
+  clip.endSeconds - clip.startSeconds;
+
+/** Segundo em que a imagem da cena 2 termina (fim do último trecho do plano). */
+export const CENA2_PICTURE_END_SECONDS = CENA2_CLIPS.reduce(
+  (end, clip) => Math.max(end, clip.atSeconds + clipSeconds(clip)),
+  0
+);
+
+/**
+ * Respiro da cena 2 depois da narração: o card de simulação continua em tela
+ * alguns frames antes do corte para a cena 3.
+ */
+const cena2TailSeconds = (): number =>
+  Math.max(
+    DEFAULT_TAIL_SECONDS,
+    CENA2_PICTURE_END_SECONDS - (AUDIO_DURATIONS["cena2"] ?? 0)
+  );
+
 export const TIMELINE_CONFIG: TimelineConfig = {
   fps: 60,
   width: 1920,
@@ -205,7 +282,8 @@ export const TIMELINE_CONFIG: TimelineConfig = {
     cena2: scene(
       "cena2",
       "Visão Global",
-      "Mapeamento Geográfico de Emissões & Simulação"
+      "Mapeamento Geográfico de Emissões & Simulação",
+      cena2TailSeconds()
     ),
     cena3: scene(
       "cena3",
@@ -236,15 +314,6 @@ export const TIMELINE_CONFIG: TimelineConfig = {
   },
 };
 
-/**
- * Cena 2 - divisão interna em 3 momentos, em frações da duração da cena.
- * Frações (em vez de segundos fixos) mantêm a divisão correta se o áudio mudar.
- */
-export const CENA2_MOMENTS = {
-  globeRotation: 0.36,
-  globeZoom: 0.32,
-  // o restante (0.32) é a revelação da simulação
-} as const;
 
 /** Cena 5 - a partir de qual fração da cena o PDF entra em tela. */
 export const CENA5_PDF_REVEAL = 0.55;

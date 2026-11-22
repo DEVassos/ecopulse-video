@@ -31,6 +31,29 @@ export interface SafeVideoProps {
 }
 
 /**
+ * Camada de zoom promovida para o compositor (GPU). O conteúdo é rasterizado
+ * uma vez no tamanho natural e apenas a camada é escalada, o que elimina o
+ * tremor de re-amostragem típico de animar `scale` no próprio <video>.
+ */
+const ZoomLayer: React.FC<{ scale: number; children: React.ReactNode }> = ({
+  scale,
+  children,
+}) => (
+  <div
+    style={{
+      position: "absolute",
+      inset: 0,
+      transformOrigin: "center center",
+      transform: `translateZ(0) scale(${scale})`,
+      willChange: "transform",
+      backfaceVisibility: "hidden",
+    }}
+  >
+    {children}
+  </div>
+);
+
+/**
  * Renderiza a gravação de tela quando ela existe em public/videos/ e cai
  * automaticamente para o print do app enquanto o vídeo não foi gravado.
  *
@@ -60,19 +83,23 @@ export const SafeVideo: React.FC<SafeVideoProps> = ({
         className={`relative w-full h-full overflow-hidden ${className}`}
         style={{ ...style, backgroundColor: "#000" }}
       >
-        <OffthreadVideo
-          src={staticFile(src)}
-          trimBefore={trimBefore}
-          durationInFrames={durationInFrames}
-          volume={volume}
-          playbackRate={playbackRate}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "contain",
-            scale,
-          }}
-        />
+        {/*
+         * O zoom vive numa camada própria: o <video> mantém o tamanho fixo (é
+         * rasterizado uma única vez) e só a camada é transformada pelo
+         * compositor. Animar `scale` direto no elemento fazia o navegador
+         * re-layoutar e re-amostrar o frame a cada quadro — era isso que
+         * tremia nos zooms.
+         */}
+        <ZoomLayer scale={scale}>
+          <OffthreadVideo
+            src={staticFile(src)}
+            trimBefore={trimBefore}
+            durationInFrames={durationInFrames}
+            volume={volume}
+            playbackRate={playbackRate}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+          />
+        </ZoomLayer>
       </div>
     );
   }
@@ -101,18 +128,13 @@ export const SafeVideo: React.FC<SafeVideoProps> = ({
         className={`relative w-full h-full overflow-hidden select-none ${className}`}
         style={{ ...style, backgroundColor: "#000" }}
       >
-        <div
-          className="w-full h-full"
-          style={{
-            scale: scale * kenBurnsScale,
-            translate: `0px ${panY}px`,
-          }}
-        >
+        <ZoomLayer scale={scale * kenBurnsScale}>
           <Img
             src={staticFile(resolvedImage)}
             className="w-full h-full object-contain"
+            style={{ translate: `0px ${panY}px` }}
           />
-        </div>
+        </ZoomLayer>
 
         {showOverlay ? (
           <>
