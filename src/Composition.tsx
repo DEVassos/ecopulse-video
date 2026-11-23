@@ -42,6 +42,12 @@ const MUSIC_BASE_VOLUME = 0.26;
 const MUSIC_LIFT_VOLUME = 0.44;
 const MUSIC_DUCKED_VOLUME = 0.1;
 const MUSIC_DUCK_RAMP_FRAMES = 14;
+/** Rampa de subida da trilha no respiro entre cenas (nominal, ver `lift`). */
+const MUSIC_LIFT_RAMP_IN_FRAMES = 18;
+/** Ponto mais alto do respiro, contado do fim da locução (nominal). */
+const MUSIC_LIFT_PEAK_FRAMES = 60;
+/** Rampa de descida da trilha no respiro entre cenas (nominal, ver `lift`). */
+const MUSIC_LIFT_RAMP_OUT_FRAMES = 24;
 const MUSIC_FADE_IN_SECONDS = 1.2;
 const MUSIC_FADE_OUT_SECONDS = 2;
 
@@ -87,15 +93,35 @@ export const EcoPulseComposition: React.FC<EcoPulseCompositionProps> = ({
       const gapStart = slot.startFrame + slot.narrationInFrames;
       const gapEnd =
         slot.startFrame + slot.durationInFrames - TIMELINE_CONFIG.transitionInFrames;
+      const gapFrames = gapEnd - gapStart;
 
-      if (gapEnd - gapStart < 40) {
+      if (gapFrames < 40) {
         return highest;
       }
 
+      // `interpolate` exige marcos estritamente crescentes. O formato nominal usa
+      // os marcos [+18, +60, -24] e o último cai antes do anterior quando a pausa
+      // fica entre 40 e 84 frames; nesse caso o respiro vira um triângulo
+      // proporcional à pausa.
+      const nominalFits =
+        gapEnd - MUSIC_LIFT_RAMP_OUT_FRAMES > gapStart + MUSIC_LIFT_PEAK_FRAMES;
+      const inputRange = nominalFits
+        ? [
+            gapStart + MUSIC_LIFT_RAMP_IN_FRAMES,
+            gapStart + MUSIC_LIFT_PEAK_FRAMES,
+            gapEnd - MUSIC_LIFT_RAMP_OUT_FRAMES,
+            gapEnd,
+          ]
+        : [
+            gapStart + Math.round(gapFrames * 0.22),
+            gapStart + Math.round(gapFrames * 0.72),
+            gapEnd,
+          ];
+
       const ramp = interpolate(
         frame,
-        [gapStart + 18, gapStart + 60, gapEnd - 24, gapEnd],
-        [0, 1, 1, 0],
+        inputRange,
+        nominalFits ? [0, 1, 1, 0] : [0, 1, 0],
         { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
       );
 
