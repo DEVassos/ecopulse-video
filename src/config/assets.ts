@@ -43,6 +43,12 @@ export const VIDEO_ASSET_MAP: Record<string, VideoAssetMapping> = {
     label: "Simulação e Alternativa Limpa",
     specs: "1080p • 60fps • Painel de simulação",
   },
+  "videos/05_emissions_chart.mp4": {
+    videoFile: "videos/05_emissions_chart.mp4",
+    fallbackImage: "images/emissoes 1.png",
+    label: "Gráfico de Emissões & Histórico",
+    specs: "1080p • 60fps • Gráfico dinâmico",
+  },
   "videos/01_globe_rotation.mp4": {
     videoFile: "videos/01_globe_rotation.mp4",
     fallbackImage: "images/dashboard 1.png",

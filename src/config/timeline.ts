@@ -244,6 +244,21 @@ export const CENA2_CLIPS: readonly Cena2Clip[] = [
   },
 ] as const;
 
+/**
+ * Overlays da cena 2 - cada janela começa e termina numa pausa da narração,
+ * para o card entrar e sair enquanto ninguém está falando.
+ */
+export const CENA2_OVERLAYS = {
+  /** "Enquanto dashboards comuns usam mapas genéricos... imagens de satélite reais." */
+  satellite: { inSeconds: 2.6, outSeconds: 5.1 },
+  /** "cruza o consumo da sua API com a matriz elétrica local..." */
+  cross: { inSeconds: 14.9, outSeconds: 19.6 },
+  /** "...instantaneamente." - selo central do cruzamento. */
+  seal: { inSeconds: 18.7, outSeconds: 20.2 },
+  /** Pausa dramática: entra o card de recomendação. */
+  badge: { inSeconds: 20.8, outSeconds: 27.0 },
+} as const;
+
 /** Segundo em que a simulação começa (usado pelo badge de recomendação). */
 export const CENA2_SIMULATION_SECONDS = CENA2_SIMULATION_AT;
 
@@ -266,6 +281,28 @@ const cena2TailSeconds = (): number =>
     DEFAULT_TAIL_SECONDS,
     CENA2_PICTURE_END_SECONDS - (AUDIO_DURATIONS["cena2"] ?? 0)
   );
+
+/* ---------------------------------------------------------------------------
+ * CENA 3 - Investigação de Emissões (1:00 - 1:35)
+ *
+ * Narração (`cena3.mp3`) = 20,51s. Gravação (`05_emissions_chart.mp4`) = 31,28s,
+ * com a seguinte estrutura medida frame a frame:
+ * - 0,00–4,60s  tela completamente parada, antes da primeira animação
+ * - 5,0–9,0s    gráfico se desenhando
+ * - 11,0s / 13,5s / 16,5s / 17,5s / 22,5s  cliques e trocas de visão
+ * - 26,5–31,3s  tela parada de novo
+ *
+ * Cortar o arquivo a partir de 4,60s encaixa o clique da visão acumulada
+ * (22,5s do arquivo) em 17,9s da cena — exatamente na fala "alterna com um
+ * clique para a visão acumulada" (que começa em 14,6s e termina em 20,4s).
+ * ------------------------------------------------------------------------- */
+
+export const CENA3_VIDEO = {
+  src: "videos/05_emissions_chart.mp4",
+  /** Descarta o trecho inicial parado do arquivo. */
+  trimStartSeconds: 4.6,
+  legend: "● Histórico • Picos • Visão Acumulada",
+} as const;
 
 export const TIMELINE_CONFIG: TimelineConfig = {
   fps: 60,

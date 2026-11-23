@@ -9,14 +9,15 @@ Coloque aqui as gravacoes de tela (.mp4) e rode `npm run scan`.
 03_globe_zoom.mp4          (zoom + foco no data center)
 04_simulation_reveal.mp4   (card de simulacao / 86,44%)
 
--- Cenas 3 a 8 (nomenclatura antiga, ainda nao renomeadas) --
-04_emissions_chart,
+-- Cena 3 (roteiro v3) --
+05_emissions_chart.mp4     (historico, picos e visao acumulada)
+
+-- Cenas 4 a 8 (nomenclatura antiga, ainda nao renomeadas) --
 04_emissions_chart, 05_compare_services, 06_compare_scatter,
 07_report_pareto, 08_help_formulas.
 
-Atencao: os prefixos 04..08 das cenas 3-8 sao os nomes ATUAIS no codigo.
-O roteiro v3 usa a numeracao 05..10; a renomeacao fica para quando essas
-cenas forem ajustadas.
+Atencao: o prefixo 04 das cenas 4-8 (04_emissions_chart) e legado e nao e
+mais usado pela Cena 3. O roteiro v3 usa a numeracao 05..10.
 
 -- IMPORTANTE ao gravar um video novo --
 Rode `npm run normalize-videos` depois de copiar o arquivo para ca.

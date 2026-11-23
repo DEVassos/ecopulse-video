@@ -10,6 +10,7 @@ import { FULL_SCREEN_WIDTH } from "../config/layout";
 import { SceneShell } from "../components/SceneShell";
 import { BrowserFrame } from "../components/BrowserFrame";
 import { SafeVideo } from "../components/SafeVideo";
+import { CENA3_VIDEO } from "../config/timeline";
 
 /**
  * Cena 3 - Investigação (Emissões)
@@ -36,8 +37,9 @@ export const Cena3Emissions: React.FC = () => {
         title="EcoPulse • Emissions Analytics"
       >
         <SafeVideo
-          src="videos/04_emissions_chart.mp4"
-          label="04 - Gráficos de Emissões & Séries Temporais"
+          src={CENA3_VIDEO.src}
+          trimBefore={Math.round(CENA3_VIDEO.trimStartSeconds * fps)}
+          label="05 - Gráficos de Emissões & Séries Temporais"
           className="w-full h-full"
         />
 
