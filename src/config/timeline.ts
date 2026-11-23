@@ -47,6 +47,12 @@ export interface TimelineConfig {
 const DEFAULT_TAIL_SECONDS = 0.8;
 
 /**
+ * Respiro final da cena 4: o tooltip da equação entrega o "nós provamos a causa
+ * raiz" e o carimbo do veredito precisa de ar para ser lido antes do corte.
+ */
+const CENA4_TAIL_SECONDS = 1.95;
+
+/**
  * Respiro final da cena 5: o carimbo "Documentação na prática." entra depois da
  * narração e uma varredura verde cobre a tela antes do corte para a cena 6.
  */
@@ -336,65 +342,131 @@ export const CENA3_VIDEO = {
 /* ------------------------------------------------------------------------- *
  * CENA 4 - Comparação e Causa Raiz (1:35 - 2:20)
  *
- * Narração (`cena4.mp3`) = 25,63s. Gravações (medidas frame a frame):
- * - `06_compare_services.mp4` 25,67s: parado até 9,5s; a seleção dos serviços
- *   acontece em 10,0s / 11,5–13,5s; dashboards em coluna a partir daí.
- * - `07_compare_scatter.mp4` 20,13s: curvas entrando em 4,5–9,5s e parado de
- *   16,0s ao fim.
+ * Narração (`cena4.mp3`) = 32,52s, reescrita para o "plot twist" da causa raiz.
+ * As fronteiras de fala abaixo foram medidas por RMS (janelas de 10 ms):
+ *  0,05–3,84  "O verdadeiro poder de decisão está na comparação lado a lado."
+ *  4,29–4,67  "Aqui,"
+ *  4,86–8,19  "você seleciona até dez serviços ... frente a frente."
+ *  8,41–14,01 "Você compara o consumo de energia, a potência e as emissões..."
+ * 14,21–17,02 "e entende a evolução de cada curva ao longo do tempo."
+ * 17,41–20,97 "Mas a resposta definitiva está aqui no cruzamento de dados:"
+ * 21,17–27,56 "a tela 'Carga ou região' isola o peso da carga do impacto da
+ *              matriz elétrica local."
+ * 27,85–32,34 "Nós não apenas apontamos o problema; nós provamos a causa raiz."
  *
- * A aplicação é sequencial (seleciona serviços -> colunas -> curvas cruzadas),
- * não lado a lado, então o plano virou dois trechos em tela cheia. O corte cai
- * em 10,24s, na pausa entre "...mais energia que o Audit Stream" e "mas emite
- * dez vezes menos carbono" — o `06` só ganha vida útil perto de 10s, e o `07`
- * assume exatamente quando a narração pede a explicação cruzada.
- *
- * O `07` entra em 10,24s e roda 15,39s (até 15,7s do arquivo), o que cobre a
- * fala "Nós não apenas apontamos o problema; nós provamos a causa raiz."
+ * A gravação `06_compare_services.mp4` (25,73s) só ganha vida depois de 9,9s
+ * (quando o resultado da comparação aparece) e `07_compare_scatter.mp4`
+ * (20,18s) estabiliza em 14,0s — esse frame parado é exportado como
+ * `images/cena4_scatter.png` para o trecho final, onde nenhum scroll compete
+ * com o tooltip da equação e o carimbo.
  * ------------------------------------------------------------------------- */
 
-export interface ScreenClip {
-  src: string;
-  /** Início do trecho no arquivo original. */
-  startSeconds: number;
-  /** Fim do trecho no arquivo original. */
-  endSeconds: number;
-  /** Segundo da cena em que o trecho entra. */
+/**
+ * Abertura em split-screen: dois recortes do resultado da comparação entram
+ * lado a lado antes de a gravação assumir a tela cheia.
+ */
+export const CENA4_SPLIT = {
+  outSeconds: 4.35,
+  panels: [
+    {
+      image: "images/cena4_split_table.png",
+      label: "Tabela × Ranking",
+      note: "energia, potência e CO₂e por serviço",
+    },
+    {
+      image: "images/cena4_split_scatter.png",
+      label: "Dispersão × Rede",
+      note: "carga do serviço × matriz elétrica local",
+    },
+  ],
+  legend: "● Comparação de Serviços • tabela × dispersão",
+} as const;
+
+/** Um plano da cena 4: ou um trecho de gravação, ou um print congelado. */
+export interface Cena4Phase {
+  kind: "video" | "still";
+  /** Arquivo relativo a `public/` (só em `video`). */
+  src?: string;
+  /** Print congelado (só em `still`). */
+  image?: string;
+  /** Segundo do arquivo original em que o plano começa (só em `video`). */
+  startSeconds?: number;
+  /** Segundo da cena em que o plano entra. */
   atSeconds: number;
-  /** Rótulo do momento (aparece na legenda inferior). */
+  /** Segundo da cena em que o plano sai. */
+  outSeconds: number;
   legend: string;
 }
 
-/**
- * Overlays da cena 4 - as janelas caem nas pausas da narração:
- * - 5,96–6,28 e 9,84–10,24: "Repare nesta discrepância" ... "dez vezes menos"
- * - 12,88–13,24: "O cruzamento das curvas responde o porquê"
- * - 15,52–15,80: "...impacto da matriz elétrica local"
- */
-export const CENA4_OVERLAYS = {
-  /** Card da discrepância: do "Repare nesta discrepância" até a causa raiz. */
-  discrepancy: { inSeconds: 6.3, outSeconds: 15.5 },
-} as const;
-
-export const CENA4_CLIPS: readonly ScreenClip[] = [
+export const CENA4_PHASES: readonly Cena4Phase[] = [
   {
-    // "O verdadeiro poder de decisão está na comparação lado a lado."
-    // "Repare nesta discrepância: o Reporting Batch consome mais energia..."
+    // "Aqui, você seleciona até dez serviços ... frente a frente."
+    kind: "video",
     src: "videos/06_compare_services.mp4",
     startSeconds: 0,
-    endSeconds: 10.24,
-    atSeconds: 0,
-    legend: "● Comparação de Serviços • Consumo × Emissão",
+    atSeconds: 4.35,
+    outSeconds: 10.05,
+    legend: "● Seleção Múltipla • até 10 serviços frente a frente",
   },
   {
-    // "...mas emite dez vezes menos carbono." + "O gráfico de dispersão
-    // responde o porquê" + "Nós provamos a causa raiz."
+    // "Você compara o consumo de energia, a potência e as emissões..."
+    // Entra já no fim da montagem: o ranking aparece e a página acomoda.
+    kind: "video",
+    src: "videos/06_compare_services.mp4",
+    startSeconds: 9.6,
+    atSeconds: 10.05,
+    outSeconds: 12.7,
+    legend: "● Ranking • do menor para o maior CO₂e",
+  },
+  {
+    // "…de cada um" — a página estabiliza na tabela de métricas.
+    kind: "video",
+    src: "videos/06_compare_services.mp4",
+    startSeconds: 13.3,
+    atSeconds: 12.7,
+    outSeconds: 14.15,
+    legend: "● Métricas • energia (Wh), potência (W) e CO₂e (g)",
+  },
+  {
+    // "e entende a evolução de cada curva ao longo do tempo."
+    kind: "video",
     src: "videos/07_compare_scatter.mp4",
     startSeconds: 0,
-    endSeconds: 15.39,
-    atSeconds: 10.24,
-    legend: "● Cruzamento das Curvas • Carga × Matriz Elétrica",
+    atSeconds: 14.15,
+    outSeconds: 17.45,
+    legend: "● Curvas de CO₂e • uma linha por serviço",
+  },
+  {
+    // "…a resposta definitiva está aqui no cruzamento de dados."
+    kind: "still",
+    image: "images/cena4_scatter.png",
+    atSeconds: 17.45,
+    outSeconds: 34.45,
+    legend: "● Cruzamento • carga do serviço × matriz elétrica",
   },
 ];
+
+/**
+ * Overlays da cena 4, ancorados nas pausas medidas acima.
+ */
+export const CENA4_OVERLAYS = {
+  /** "seleciona até dez serviços" — realce na grade de chips. */
+  chips: { inSeconds: 4.95, outSeconds: 9.55 },
+  /** "do menor para o maior CO₂e" — selo do ranking. */
+  ranking: { inSeconds: 10.35, outSeconds: 12.65 },
+  /** "Você compara o consumo de energia, a potência e as emissões" */
+  metrics: { inSeconds: 12.85, outSeconds: 14.15 },
+  /** "a evolução de cada curva ao longo do tempo". */
+  curves: { inSeconds: 14.45, outSeconds: 17.4 },
+  /** "a resposta definitiva está aqui no cruzamento de dados". */
+  crossing: { inSeconds: 17.75, outSeconds: 21.0 },
+  /** "a tela 'Carga ou região' isola o peso da carga..." */
+  isolate: { inSeconds: 21.4, outSeconds: 27.4 },
+  /** "nós provamos a causa raiz" — a conta que fecha o diagnóstico. */
+  equation: { inSeconds: 27.9, outSeconds: 30.55 },
+  /** Fecho da cena: carimbo do veredito. */
+  closing: { inSeconds: 30.15 },
+} as const;
 
 export const TIMELINE_CONFIG: TimelineConfig = {
   fps: 60,
@@ -422,7 +494,8 @@ export const TIMELINE_CONFIG: TimelineConfig = {
     cena4: scene(
       "cena4",
       "Análise de Causa Raiz",
-      "Correlação Multivariável entre Consumo Elétrico e Carbono"
+      "Correlação Multivariável entre Consumo Elétrico e Carbono",
+      CENA4_TAIL_SECONDS
     ),
     cena5: scene(
       "cena5",

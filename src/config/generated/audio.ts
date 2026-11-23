@@ -9,7 +9,7 @@ export const AUDIO_DURATIONS: Record<string, number> = {
   "cena1": 18.286,
   "cena2": 27.559,
   "cena3": 20.506,
-  "cena4": 25.626,
+  "cena4": 32.522,
   "cena5": 31.713,
   "cena6": 16.666,
   "cena7": 21.551,
