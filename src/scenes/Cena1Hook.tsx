@@ -227,7 +227,7 @@ const HOOK_POPUPS: readonly HookPopup[] = [
  */
 export const Cena1Hook: React.FC = () => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps } = useVideoConfig();
 
   const toFrame = (seconds: number) => Math.round(seconds * fps);
 
@@ -244,20 +244,6 @@ export const Cena1Hook: React.FC = () => {
 
   const activeBlock =
     [...blocks].reverse().find((block) => frame >= block.from) ?? blocks[0];
-
-  const lastBlock = blocks[blocks.length - 1];
-  const pushInStart = lastBlock.from + lastBlock.frames * 0.4;
-
-  const pushInScale = interpolate(
-    frame,
-    [pushInStart, durationInFrames],
-    [1, 1.12],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: Easing.inOut(Easing.cubic),
-    }
-  );
 
   // Entrada das gravações (sobe + escala + fade) quando a pergunta termina.
   const stageIn = spring({
@@ -391,7 +377,6 @@ export const Cena1Hook: React.FC = () => {
         style={{
           width: FULL_SCREEN_WIDTH,
           opacity: stageIn,
-          scale: interpolate(stageIn, [0, 1], [0.95, 1]) * pushInScale,
           translate: `0px ${interpolate(stageIn, [0, 1], [56, 0])}px`,
         }}
       >

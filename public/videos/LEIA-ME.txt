@@ -1,14 +1,25 @@
 Coloque aqui as gravacoes de tela (.mp4) e rode `npm run scan`.
 
 -- Cena 1 (roteiro v3) --
-00_home_to_login.mp4   (Home -> Login, 0:00-0:12)
-01_login_typing.mp4    (digitando e-mail/senha + clique em Entrar, 0:12-0:25)
+00_home_to_login.mp4   (Home -> Login)
+01_login_typing.mp4    (digitando e-mail/senha + clique em Entrar)
 
--- Cenas 2 a 8 (nomenclatura atual do projeto) --
-01_globe_rotation, 02_globe_zoom, 03_simulation_reveal,
+-- Cena 2 (roteiro v3) --
+02_globe_rotation.mp4      (globo girando)
+03_globe_zoom.mp4          (zoom + foco no data center)
+04_simulation_reveal.mp4   (card de simulacao / 86,44%)
+
+-- Cenas 3 a 8 (nomenclatura antiga, ainda nao renomeadas) --
+04_emissions_chart,
 04_emissions_chart, 05_compare_services, 06_compare_scatter,
 07_report_pareto, 08_help_formulas.
 
-Atencao: os prefixos 01/02/... das cenas 2-8 sao os nomes ATUAIS no codigo.
-O roteiro v3 usa a numeracao 02..10; a renomeacao das cenas 2-8 fica para
-quando essas cenas forem ajustadas.
+Atencao: os prefixos 04..08 das cenas 3-8 sao os nomes ATUAIS no codigo.
+O roteiro v3 usa a numeracao 05..10; a renomeacao fica para quando essas
+cenas forem ajustadas.
+
+-- IMPORTANTE ao gravar um video novo --
+Rode `npm run normalize-videos` depois de copiar o arquivo para ca.
+As gravacoes de tela saem com timestamps irregulares (VFR), e isso faz o
+video "tremer" nos zooms. O script regrava em 60fps constante e guarda o
+original em .video-originals/ (fora de public/).

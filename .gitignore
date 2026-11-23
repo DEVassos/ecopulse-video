@@ -45,3 +45,6 @@ skills-lock.json
 
 # PID do Remotion Studio em background (npm run studio:start)
 .studio.pid
+
+# Gravações originais (backup do normalize-videos)
+.video-originals/

@@ -22,34 +22,8 @@ import { SafeVideo } from "../components/SafeVideo";
 /** Frames de varredura verde em cada corte entre um trecho e o próximo. */
 const CUT_FLASH_FRAMES = 12;
 
-/** Moldura de escala de cada trecho: o globo abre devagar, o card fecha o plano. */
-const CLIP_PUSH: readonly (readonly [number, number])[] = [
-  [1.0, 1.15],
-  [1.02, 1.08],
-  [1.0, 1.12],
-];
-
-const ClipLayer: React.FC<{ clip: Cena2Clip; index: number }> = ({
-  clip,
-  index,
-}) => {
-  const frame = useCurrentFrame();
+const ClipLayer: React.FC<{ clip: Cena2Clip }> = ({ clip }) => {
   const { fps } = useVideoConfig();
-
-  const localFrames = Math.round(clipSeconds(clip) * fps);
-  const [from, to] = CLIP_PUSH[index] ?? [1, 1];
-  const push = interpolate(frame, [0, localFrames], [from, to], {
-    extrapolateRight: "clamp",
-  });
-
-  // No trecho da simulação o push acompanha o card no canto inferior direito.
-  const focus =
-    index === CLIP_PUSH.length - 1
-      ? interpolate(frame, [localFrames * 0.45, localFrames], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        })
-      : 0;
 
   return (
     <AbsoluteFill>
@@ -60,8 +34,6 @@ const ClipLayer: React.FC<{ clip: Cena2Clip; index: number }> = ({
         playbackRate={1}
         volume={0}
         kenBurns={false}
-        scale={push}
-        style={{ translate: `${-46 * focus}px ${-34 * focus}px` }}
         className="w-full h-full"
       />
     </AbsoluteFill>
@@ -138,7 +110,7 @@ export const Cena2Map: React.FC = () => {
             from={bounds[index].start}
             durationInFrames={bounds[index].length}
           >
-            <ClipLayer clip={clip} index={index} />
+            <ClipLayer clip={clip} />
           </Sequence>
         ))}
 

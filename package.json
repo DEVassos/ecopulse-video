@@ -41,7 +41,8 @@
     "render:short": "remotion render EcoPulseShort out/ecopulse-short.mp4 --props='{\"showPlaceholders\":false}'",
     "still": "remotion still EcoPulseMain",
     "upgrade": "remotion upgrade",
-    "lint": "eslint src && tsc"
+    "lint": "eslint src && tsc",
+    "normalize-videos": "node scripts/normalize-videos.mjs"
   },
   "allowScripts": {
     "esbuild": false
