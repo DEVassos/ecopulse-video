@@ -73,17 +73,17 @@ export const VIDEO_ASSET_MAP: Record<string, VideoAssetMapping> = {
     label: "Gráfico de Emissões & Histórico",
     specs: "1080p • 60fps • Gráfico dinâmico",
   },
-  "videos/05_compare_services.mp4": {
-    videoFile: "videos/05_compare_services.mp4",
+  "videos/06_compare_services.mp4": {
+    videoFile: "videos/06_compare_services.mp4",
     fallbackImage: "images/comparação 1.png",
     label: "Comparação: Consumo vs. Emissão",
-    specs: "1080p • 60fps • Tabela comparativa",
+    specs: "1080p • 60fps • Serviços em coluna",
   },
-  "videos/06_compare_scatter.mp4": {
-    videoFile: "videos/06_compare_scatter.mp4",
+  "videos/07_compare_scatter.mp4": {
+    videoFile: "videos/07_compare_scatter.mp4",
     fallbackImage: "images/comparação 5.png",
-    label: "Gráfico de Dispersão Carga/Região",
-    specs: "1080p • 60fps • Gráfico scatter",
+    label: "Curvas Cruzadas por Serviço",
+    specs: "1080p • 60fps • Comparação cruzada",
   },
   "videos/07_report_pareto.mp4": {
     videoFile: "videos/07_report_pareto.mp4",

@@ -304,6 +304,58 @@ export const CENA3_VIDEO = {
   legend: "● Histórico • Picos • Visão Acumulada",
 } as const;
 
+/* ------------------------------------------------------------------------- *
+ * CENA 4 - Comparação e Causa Raiz (1:35 - 2:20)
+ *
+ * Narração (`cena4.mp3`) = 25,63s. Gravações (medidas frame a frame):
+ * - `06_compare_services.mp4` 25,67s: parado até 9,5s; a seleção dos serviços
+ *   acontece em 10,0s / 11,5–13,5s; dashboards em coluna a partir daí.
+ * - `07_compare_scatter.mp4` 20,13s: curvas entrando em 4,5–9,5s e parado de
+ *   16,0s ao fim.
+ *
+ * A aplicação é sequencial (seleciona serviços -> colunas -> curvas cruzadas),
+ * não lado a lado, então o plano virou dois trechos em tela cheia. O corte cai
+ * em 10,24s, na pausa entre "...mais energia que o Audit Stream" e "mas emite
+ * dez vezes menos carbono" — o `06` só ganha vida útil perto de 10s, e o `07`
+ * assume exatamente quando a narração pede a explicação cruzada.
+ *
+ * O `07` entra em 10,24s e roda 15,39s (até 15,7s do arquivo), o que cobre a
+ * fala "Nós não apenas apontamos o problema; nós provamos a causa raiz."
+ * ------------------------------------------------------------------------- */
+
+export interface ScreenClip {
+  src: string;
+  /** Início do trecho no arquivo original. */
+  startSeconds: number;
+  /** Fim do trecho no arquivo original. */
+  endSeconds: number;
+  /** Segundo da cena em que o trecho entra. */
+  atSeconds: number;
+  /** Rótulo do momento (aparece na legenda inferior). */
+  legend: string;
+}
+
+export const CENA4_CLIPS: readonly ScreenClip[] = [
+  {
+    // "O verdadeiro poder de decisão está na comparação lado a lado."
+    // "Repare nesta discrepância: o Reporting Batch consome mais energia..."
+    src: "videos/06_compare_services.mp4",
+    startSeconds: 0,
+    endSeconds: 10.24,
+    atSeconds: 0,
+    legend: "● Comparação de Serviços • Consumo × Emissão",
+  },
+  {
+    // "...mas emite dez vezes menos carbono." + "O gráfico de dispersão
+    // responde o porquê" + "Nós provamos a causa raiz."
+    src: "videos/07_compare_scatter.mp4",
+    startSeconds: 0,
+    endSeconds: 15.39,
+    atSeconds: 10.24,
+    legend: "● Cruzamento das Curvas • Carga × Matriz Elétrica",
+  },
+];
+
 export const TIMELINE_CONFIG: TimelineConfig = {
   fps: 60,
   width: 1920,

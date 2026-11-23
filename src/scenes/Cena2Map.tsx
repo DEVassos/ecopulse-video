@@ -1,71 +1,16 @@
 import React from "react";
-import {
-  AbsoluteFill,
-  Sequence,
-  interpolate,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
+import { Sequence, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { FULL_SCREEN_WIDTH } from "../config/layout";
-import {
-  CENA2_CLIPS,
-  CENA2_OVERLAYS,
-  Cena2Clip,
-  clipSeconds,
-} from "../config/timeline";
+import { CENA2_CLIPS, CENA2_OVERLAYS, clipSeconds } from "../config/timeline";
 import { SceneShell } from "../components/SceneShell";
 import { BrowserFrame } from "../components/BrowserFrame";
-import { SafeVideo } from "../components/SafeVideo";
+import { CutFlash, ScreenClipLayer } from "../components/ScreenClip";
 import {
   CrossPanel,
   InstantSeal,
   SatelliteBadge,
   SimulationBadge,
 } from "./Cena2Overlays";
-
-/** Frames de varredura verde em cada corte entre um trecho e o próximo. */
-const CUT_FLASH_FRAMES = 12;
-
-const ClipLayer: React.FC<{ clip: Cena2Clip }> = ({ clip }) => {
-  const { fps } = useVideoConfig();
-
-  return (
-    <AbsoluteFill>
-      <SafeVideo
-        src={clip.src}
-        label={clip.legend}
-        trimBefore={Math.round(clip.startSeconds * fps)}
-        playbackRate={1}
-        volume={0}
-        kenBurns={false}
-        className="w-full h-full"
-      />
-    </AbsoluteFill>
-  );
-};
-
-/** Varredura de luz verde marcando a troca de trecho (mesma linguagem da cena 1). */
-const CutFlash: React.FC<{ atFrame: number }> = ({ atFrame }) => {
-  const frame = useCurrentFrame();
-  const local = frame - atFrame;
-
-  if (local < 0 || local > CUT_FLASH_FRAMES) return null;
-
-  const progress = local / CUT_FLASH_FRAMES;
-
-  return (
-    <div
-      className="absolute inset-0 z-10 pointer-events-none"
-      style={{
-        opacity: interpolate(progress, [0, 0.25, 1], [0, 0.55, 0]),
-        background:
-          "linear-gradient(105deg, transparent 30%, #d8fff0 48%, #34d399 52%, transparent 70%)",
-        translate: `${interpolate(progress, [0, 1], [-30, 30])}% 0px`,
-        scale: 1.1,
-      }}
-    />
-  );
-};
 
 /**
  * Cena 2 - O Mapa e a Simulação.
@@ -109,7 +54,11 @@ export const Cena2Map: React.FC = () => {
             from={bounds[index].start}
             durationInFrames={bounds[index].length}
           >
-            <ClipLayer clip={clip} />
+            <ScreenClipLayer
+              src={clip.src}
+              startSeconds={clip.startSeconds}
+              label={clip.legend}
+            />
           </Sequence>
         ))}
 
