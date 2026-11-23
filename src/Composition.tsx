@@ -19,6 +19,7 @@ import { Cena4Compare } from "./scenes/Cena4Compare";
 import { Cena5Report } from "./scenes/Cena5Report";
 import { Cena6Help } from "./scenes/Cena6Help";
 import { Cena7Access } from "./scenes/Cena7Access";
+import { CenaMobile } from "./scenes/CenaMobile";
 import { Cena8Outro } from "./scenes/Cena8Outro";
 
 const SCENE_COMPONENTS = {
@@ -29,6 +30,7 @@ const SCENE_COMPONENTS = {
   cena5: Cena5Report,
   cena6: Cena6Help,
   cena7: Cena7Access,
+  mobile: CenaMobile,
   cena8: Cena8Outro,
 } as const;
 
@@ -73,6 +75,11 @@ export const EcoPulseComposition: React.FC<EcoPulseCompositionProps> = ({
 
   const musicVolume = (frame: number): number => {
     const duck = slots.reduce((highest, slot) => {
+      // Cena sem narração (mobile): nada para abaixar, e os marcos do
+      // `interpolate` deixariam de ser crescentes.
+      if (slot.narrationInFrames === 0) {
+        return highest;
+      }
       const start = slot.startFrame;
       const end = start + slot.narrationInFrames;
       const ramp = interpolate(
@@ -159,7 +166,11 @@ export const EcoPulseComposition: React.FC<EcoPulseCompositionProps> = ({
               </TransitionSeries.Sequence>
               {index < scenes.length - 1 ? (
                 <TransitionSeries.Transition
-                  presentation={fade()}
+                  // Crossfade de verdade: a cena que sai também esmaece. Sem
+                  // isso ela fica com opacidade 1 por cima até ser desmontada,
+                  // e o que não tem saída própria (carimbo da cena 4, varredura
+                  // da cena 5) some de uma vez no último frame da transição.
+                  presentation={fade({ shouldFadeOutExitingScene: true })}
                   timing={linearTiming({
                     durationInFrames: TIMELINE_CONFIG.transitionInFrames,
                   })}

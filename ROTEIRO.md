@@ -159,6 +159,20 @@ Tom de voz: Corporativo, seguro e objetivo.
 
 ---
 
+## CENA MOBILE: O APP NO CELULAR (3:04 - 3:10)
+
+Sem narração: só a trilha de fundo, que sobe sozinha por não haver locução.
+
+**[DIREÇÃO VISUAL / REMOTION]:**
+
+- Cabeçalho padrão: pílula "Mobile" e o título "EcoPulse no celular".
+- Gravação do app no celular (`11_mobile.mp4`: login, dashboard, mapa, regiões e
+  serviços) dentro de um aparelho centralizado, com borda e brilho esmeralda.
+- O fade próprio da gravação (preto no início e no fim) é cortado: a cena usa só
+  o trecho 0,55–7,10s e a entrada e a saída ficam por conta do crossfade.
+
+---
+
 ## CENA 8: FECHAMENTO (3:40 - 3:55)
 
 Tom de voz: Inspirador, firme e conclusivo.
@@ -201,6 +215,7 @@ Tom de voz: Inspirador, firme e conclusivo.
 - `public/videos/08_report_pareto.mp4`
 - `public/videos/09_help_formulas.mp4`
 - `public/videos/10_config.mp4` (Vídeo da Cena 7)
+- `public/videos/11_mobile.mp4` (Vídeo da Cena Mobile, sem áudio)
 
 **Imagens**
 

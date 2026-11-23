@@ -17,6 +17,7 @@ export const SCENE_KEYS = [
   "cena5",
   "cena6",
   "cena7",
+  "mobile",
   "cena8",
 ] as const;
 
@@ -28,8 +29,8 @@ export interface SceneConfig {
   label: string;
   /** Headline da cena */
   title: string;
-  /** Arquivo de narração relativo a public/ */
-  audioFile: string;
+  /** Arquivo de narração relativo a public/ (`null` = cena sem narração) */
+  audioFile: string | null;
   /** Segundos de silêncio mantidos após o fim da narração */
   tailSeconds: number;
 }
@@ -82,6 +83,43 @@ const scene = (
   audioFile: `audio/${key}.mp3`,
   tailSeconds,
 });
+
+/**
+ * Cena sem narração: dura exatamente `seconds` e só tem a trilha de fundo (que
+ * sobe sozinha, porque não há locução para abaixá-la).
+ */
+const silentScene = (
+  key: SceneKey,
+  label: string,
+  title: string,
+  seconds: number
+): SceneConfig => ({
+  key,
+  label,
+  title,
+  audioFile: null,
+  tailSeconds: seconds,
+});
+
+/* ------------------------------------------------------------------------- *
+ * CENA MOBILE - o app no celular (entre a cena 7 e o fechamento)
+ *
+ * Sem narração, só o título. A gravação (`11_mobile.mp4`, 478x850, 7,63s) tem
+ * fade próprio: sobe do preto até 0,53s e desce para o preto a partir de 7,13s.
+ * Esses trechos são cortados (`trimStartSeconds` + duração da cena) para a
+ * entrada e a saída ficarem por conta do crossfade entre cenas, sem tela preta
+ * dentro do celular.
+ * ------------------------------------------------------------------------- */
+
+export const MOBILE_VIDEO = {
+  src: "videos/11_mobile.mp4",
+  width: 478,
+  height: 850,
+  trimStartSeconds: 0.55,
+} as const;
+
+/** 0,55s -> 7,10s da gravação: só o trecho com conteúdo. */
+const MOBILE_SCENE_SECONDS = 6.55;
 
 /* ---------------------------------------------------------------------------
  * CENA 1 - plano de imagem em SEGUNDOS ABSOLUTOS
@@ -514,6 +552,12 @@ export const TIMELINE_CONFIG: TimelineConfig = {
       "Controle de Acesso Corporativo & Convites Individuais",
       CENA7_TAIL_SECONDS
     ),
+    mobile: silentScene(
+      "mobile",
+      "Mobile",
+      "EcoPulse no celular",
+      MOBILE_SCENE_SECONDS
+    ),
     cena8: scene(
       "cena8",
       "Fechamento",
@@ -651,6 +695,9 @@ export const SHORT_SCENE_KEYS: readonly SceneKey[] = [
 ];
 
 const audioDurationOf = (key: SceneKey): number => {
+  if (TIMELINE_CONFIG.scenes[key].audioFile === null) {
+    return 0;
+  }
   const seconds = AUDIO_DURATIONS[key];
   if (typeof seconds !== "number" || seconds <= 0) {
     throw new Error(

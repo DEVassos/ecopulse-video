@@ -75,12 +75,14 @@ export const SceneShell: React.FC<SceneShellProps> = ({
       className="relative w-full h-full overflow-hidden select-none"
       style={{ backgroundColor: THEME.colors.bg }}
     >
-      <SafeAudio
-        src={audioFile}
-        fadeInSeconds={0.12}
-        fadeOutSeconds={0.25}
-        durationInFrames={narrationInFrames}
-      />
+      {audioFile && narrationInFrames > 0 ? (
+        <SafeAudio
+          src={audioFile}
+          fadeInSeconds={0.12}
+          fadeOutSeconds={0.25}
+          durationInFrames={narrationInFrames}
+        />
+      ) : null}
 
       {/* Brilho ambiente + grade sutil */}
       <div

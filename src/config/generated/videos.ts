@@ -15,5 +15,6 @@ export const RECORDED_VIDEOS: readonly string[] = [
   "videos/07_compare_scatter.mp4",
   "videos/08_report_pareto.mp4",
   "videos/09_help_formulas.mp4",
-  "videos/10_config.mp4"
+  "videos/10_config.mp4",
+  "videos/11_mobile.mp4"
 ];
