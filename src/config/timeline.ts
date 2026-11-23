@@ -335,6 +335,17 @@ export interface ScreenClip {
   legend: string;
 }
 
+/**
+ * Overlays da cena 4 - as janelas caem nas pausas da narração:
+ * - 5,96–6,28 e 9,84–10,24: "Repare nesta discrepância" ... "dez vezes menos"
+ * - 12,88–13,24: "O cruzamento das curvas responde o porquê"
+ * - 15,52–15,80: "...impacto da matriz elétrica local"
+ */
+export const CENA4_OVERLAYS = {
+  /** Card da discrepância: do "Repare nesta discrepância" até a causa raiz. */
+  discrepancy: { inSeconds: 6.3, outSeconds: 15.5 },
+} as const;
+
 export const CENA4_CLIPS: readonly ScreenClip[] = [
   {
     // "O verdadeiro poder de decisão está na comparação lado a lado."

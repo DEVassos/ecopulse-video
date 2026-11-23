@@ -68,12 +68,14 @@ Tom de voz: Tom de descoberta ("plot twist"), revelador.
 
 **[NARRAÇÃO - cena4.mp3]:**
 
-> "[confident, authoritative] O verdadeiro poder de decisão está na comparação lado a lado. [short pause] [intrigued] Repare nesta [emphasis] discrepância: [slowly, dramatic] o Reporting Batch consome mais energia que o Audit Stream... mas emite [emphasis] dez vezes menos carbono. [revealing, confident] O gráfico de dispersão responde o porquê: [analytical, clear] ele separa o que é peso da carga de trabalho do que é impacto da matriz elétrica local. [firm, proud] Nós não apenas apontamos o problema; [emphasis] nós provamos a [emphasis] causa raiz."
+> "[confident, authoritative] O verdadeiro poder de decisão está na comparação lado a lado. [short pause] [intrigued] Repare nesta [emphasis] discrepância: [slowly, dramatic] o Reporting Batch consome mais energia que o Audit Stream... mas emite [emphasis] dez vezes menos carbono. [revealing, confident] O cruzamento das curvas responde o porquê: [analytical, clear] ele coloca o peso de cada carga contra o impacto da matriz elétrica local. [firm, proud] Nós não apenas apontamos o problema; [emphasis] nós provamos a [emphasis] causa raiz."
 
 **[DIREÇÃO VISUAL / REMOTION]:**
 
-- Split-screen 50/50: Esquerda `06_compare_services.mp4`, direita `07_compare_scatter.mp4`.
-- Linha vetorial verde (#10B981) conectando o "Reporting Batch" ao "Ontario (40 g/kWh)".
+- Dois trechos em tela cheia (não split): `06_compare_services.mp4` até 10,24s
+  e `07_compare_scatter.mp4` do 10,24s ao fim.
+- Card glassmorphism inferior direito: "Carga não é emissão • A matriz elétrica
+  local decide".
 
 ---
 

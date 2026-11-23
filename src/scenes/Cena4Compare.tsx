@@ -1,10 +1,11 @@
 import React from "react";
 import { Sequence, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { FULL_SCREEN_WIDTH } from "../config/layout";
-import { CENA4_CLIPS, clipSeconds } from "../config/timeline";
+import { CENA4_CLIPS, CENA4_OVERLAYS, clipSeconds } from "../config/timeline";
 import { SceneShell } from "../components/SceneShell";
 import { BrowserFrame } from "../components/BrowserFrame";
 import { CutFlash, ScreenClipLayer } from "../components/ScreenClip";
+import { DiscrepancyCard } from "./Cena4Overlays";
 
 /**
  * Cena 4 - Comparação e Causa Raiz.
@@ -19,6 +20,8 @@ import { CutFlash, ScreenClipLayer } from "../components/ScreenClip";
 export const Cena4Compare: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
+
+  const toFrame = (seconds: number) => Math.round(seconds * fps);
 
   const bounds = CENA4_CLIPS.map((clip) => ({
     start: Math.round(clip.atSeconds * fps),
@@ -75,6 +78,17 @@ export const Cena4Compare: React.FC = () => {
         >
           {CENA4_CLIPS[activeIndex].legend}
         </div>
+
+        <Sequence
+          from={toFrame(CENA4_OVERLAYS.discrepancy.inSeconds)}
+          durationInFrames={toFrame(
+            CENA4_OVERLAYS.discrepancy.outSeconds -
+              CENA4_OVERLAYS.discrepancy.inSeconds
+          )}
+          layout="none"
+        >
+          <DiscrepancyCard />
+        </Sequence>
       </BrowserFrame>
     </SceneShell>
   );

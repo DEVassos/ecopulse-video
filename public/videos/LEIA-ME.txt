@@ -12,12 +12,17 @@ Coloque aqui as gravacoes de tela (.mp4) e rode `npm run scan`.
 -- Cena 3 (roteiro v3) --
 05_emissions_chart.mp4     (historico, picos e visao acumulada)
 
--- Cenas 4 a 8 (nomenclatura antiga, ainda nao renomeadas) --
-04_emissions_chart, 05_compare_services, 06_compare_scatter,
-07_report_pareto, 08_help_formulas.
+-- Cena 4 (roteiro v3) --
+06_compare_services.mp4    (servicos selecionados em coluna)
+07_compare_scatter.mp4     (curvas cruzadas por servico)
 
-Atencao: o prefixo 04 das cenas 4-8 (04_emissions_chart) e legado e nao e
-mais usado pela Cena 3. O roteiro v3 usa a numeracao 05..10.
+-- Cenas 5 a 8 (nomenclatura antiga, ainda nao renomeadas) --
+07_report_pareto, 08_help_formulas.
+Faltam: 10_settings_invite.mp4 (Cena 7).
+
+Atencao: os prefixos antigos (04_emissions_chart, 05_compare_services,
+06_compare_scatter) sao legado. O roteiro v3 usa a numeracao 05..10, entao
+os arquivos da Cena 4 sao 06 e 07.
 
 -- IMPORTANTE ao gravar um video novo --
 Rode `npm run normalize-videos` depois de copiar o arquivo para ca.
