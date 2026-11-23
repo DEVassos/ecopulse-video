@@ -21,7 +21,6 @@ const RECAP_STEPS = [8, 97, 182] as const;
 
 const TITLE_OUT = [230, 264] as const;
 const BRAND_IN = 266;
-const BRAND_PULSE = 288;
 const SUBTITLE_ONE = 353;
 const SUBTITLE_TWO = 457;
 const CONTENT_OUT = [659, 687] as const;
@@ -92,8 +91,6 @@ export const Cena8Outro: React.FC = () => {
     extrapolateRight: "clamp",
   });
 
-  const pulse = 0.5 + 0.5 * Math.sin((frame / fps) * Math.PI * 2);
-  const glow = 1 + 0.05 * Math.sin((frame / fps) * Math.PI * 1.2);
 
   return (
     <SceneShell sceneKey="cena8" showHeader={false}>
@@ -133,7 +130,7 @@ export const Cena8Outro: React.FC = () => {
             style={{
               background:
                 "radial-gradient(circle, rgba(16,185,129,0.16) 0%, rgba(16,185,129,0.05) 42%, transparent 68%)",
-              opacity: brandIn * (0.8 + pulse * 0.2),
+              opacity: brandIn * 0.9,
             }}
           />
 
@@ -141,15 +138,11 @@ export const Cena8Outro: React.FC = () => {
             className="relative"
             style={{
               opacity: brandIn,
-              scale: interpolate(brandIn, [0, 1], [0.92, 1]) * glow,
+              scale: interpolate(brandIn, [0, 1], [0.92, 1]),
               translate: `0px ${interpolate(brandIn, [0, 1], [24, 0])}px`,
             }}
           >
-            <Brand
-              startFrame={BRAND_PULSE}
-              repeatSeconds={2.4}
-              fontSize={104}
-            />
+            <Brand animated={false} fontSize={104} />
           </div>
 
           <div

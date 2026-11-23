@@ -91,6 +91,8 @@ export interface BrandProps {
   fontSize?: number;
   /** Intervalo entre batimentos em segundos. `0` (padrão) toca uma vez só. */
   repeatSeconds?: number;
+  /** `false` deixa o wordmark estático, na forma de repouso. */
+  animated?: boolean;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -99,6 +101,7 @@ export const Brand: React.FC<BrandProps> = ({
   startFrame = 0,
   fontSize = 24,
   repeatSeconds = 0,
+  animated = true,
   className,
   style,
 }) => {
@@ -109,7 +112,7 @@ export const Brand: React.FC<BrandProps> = ({
   const elapsed = Math.max(0, frame - startFrame);
   const local =
     repeatSeconds > 0 ? elapsed % cycleFrames : Math.min(elapsed, cycleFrames);
-  const t = local / cycleFrames;
+  const t = animated ? local / cycleFrames : 0;
 
   const progress = holdProgress(t);
   const leafDashOffset = round(progress * 1.05);
