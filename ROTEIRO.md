@@ -129,8 +129,14 @@ Tom de voz: Sóbrio, técnico e confiável.
 
 **[DIREÇÃO VISUAL / REMOTION]:**
 
-- Exibe `09_help_formulas.mp4`.
-- Card glassmorphism na base digita `P = CPU% × 1 + RAM × 0.375`.
+- Exibe `09_help_formulas.mp4` (a fórmula completa, com disco e rede, já está legível na página).
+- Selo no canto superior direito: "Acesso corporativo protegido" (entra em "controle de acesso corporativo", sai na pausa).
+- Card glassmorphism na base entra em "total transparência matemática" e revela as palavras-chave na medida em que a locução as cita:
+  - "Página de Ajuda" (verde)
+  - "Fórmulas abertas" (turquesa)
+  - "Potência · Energia · Carbono" (lima)
+- Fecha com "✓ Cada número é rastreável" em "Aqui, você sabe exatamente...".
+- Nada de fórmula digitada na tela: a própria página do app é a fonte da verdade.
 
 ---
 
