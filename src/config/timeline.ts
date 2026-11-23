@@ -459,9 +459,18 @@ export const CENA5_OVERLAYS = {
   pdf: { inSeconds: 13.6 },
   /** Carimbo na fala "o PDF se adapta para o tema claro". */
   stamp: { inSeconds: 26.8 },
-  /** Troca para a segunda exportação - prova que "qualquer tela" exporta. */
-  swapToCompare: { inSeconds: 27.6 },
-  swapBack: { inSeconds: 29.9 },
+  /**
+   * As outras três exportações entram espalhadas pela tela durante "use como
+   * documento oficial de governança" (16,98–23,13), provando na prática que
+   * qualquer tela exporta.
+   */
+  gallery: {
+    comparacao: { inSeconds: 17.4 },
+    emissoes: { inSeconds: 19.5 },
+    dashboard: { inSeconds: 21.4 },
+    /** Saem antes do carimbo, para o PDF principal ficar sozinho. */
+    outSeconds: 24.2,
+  },
   /** Escurece o fundo para o PDF ganhar primeiro plano. */
   scrim: { inSeconds: 22.4, seconds: 1.6 },
 } as const;

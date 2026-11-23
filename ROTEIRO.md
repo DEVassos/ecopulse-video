@@ -89,15 +89,24 @@ Tom de voz: Consultivo, seguro e resolutivo.
 
 **[DIREÇÃO VISUAL / REMOTION]:**
 
-- Inicia com `08_report_pareto.mp4` mostrando o Relatório de forma geral.
-- Na fala "...regras fixas e auditáveis... sem IA alucinada", destaque sutil
-  (caixa ou linha verde) na seção "Como este relatório é gerado".
-- Na fala "Exporte relatórios completos em PDF ou CSV a partir de qualquer
-  tela", o mouse clica em "Imprimir / PDF" e `relatorio-pdf-1.png` surge
-  flutuando na tela.
-- Selo animado com efeito de "carimbo": "Tema Claro • Economia de Tinta".
-- Com o PDF em tela, flash rápido mostrando `relatorio-pdf-2.png` para provar
-  que "qualquer tela" pode ser exportada.
+- Inicia com `08_report_pareto.mp4` em tela cheia, mostrando o Relatório de
+  forma geral.
+- Em 4,7s, na fala "...regras fixas e auditáveis... sem IA alucinada", entra um
+  card no canto superior direito: **"Como este relatório é gerado / Regras
+  fixas e auditáveis • Zero IA generativa"**, com barra de gradiente verde e a
+  expressão "Zero IA generativa" em verde-lima para puxar o olho. Sai em 8,7s.
+- Em 13,6s, na fala "Exporte relatórios completos em PDF ou CSV", o cartão do
+  **PDF Executivo** (`images/pdf/relatorio.png`) desliza da direita, com barra
+  de título de arquivo.
+- Em 22,4s o fundo escurece (scrim `#04100C` a 50%) para o PDF ganhar primeiro
+  plano. O vídeo termina em 22,92s e o último frame fica **congelado**, sem
+  corte seco.
+- Entre 17,4s e 21,4s, na fala "documento oficial de governança", as outras
+  **três exportações** entram espalhadas pela tela — Comparação de Serviços,
+  Emissões e Dashboard — cada uma com um flash branco rápido de "exportando".
+  Elas saem em 24,2s, antes do carimbo.
+- Em 26,8s, selo animado com efeito de **carimbo**: "Tema Claro • Economia de
+  Tinta" (escala 1,9 → 1, rotação -16° → -7°).
 
 ---
 

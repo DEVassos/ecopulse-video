@@ -16,8 +16,11 @@ Coloque aqui as gravacoes de tela (.mp4) e rode `npm run scan`.
 06_compare_services.mp4    (servicos selecionados em coluna)
 07_compare_scatter.mp4     (curvas cruzadas por servico)
 
--- Cenas 5 a 8 (nomenclatura antiga, ainda nao renomeadas) --
-07_report_pareto, 08_help_formulas.
+-- Cena 5 (roteiro v3) --
+08_report_pareto.mp4       (relatorio: curva de Pareto e regras auditaveis)
+
+-- Cenas 6 a 8 --
+09_help_formulas (nomenclatura antiga, ainda nao renomeada).
 Faltam: 10_settings_invite.mp4 (Cena 7).
 
 Atencao: os prefixos antigos (04_emissions_chart, 05_compare_services,
@@ -26,6 +29,9 @@ os arquivos da Cena 4 sao 06 e 07.
 
 -- IMPORTANTE ao gravar um video novo --
 Rode `npm run normalize-videos` depois de copiar o arquivo para ca.
+Use `--size 1536x864` para ampliar para a largura nativa do <BrowserFrame>
+(evita que o navegador estique a imagem e borre o texto), e um nome
+(`-- 08_report`) para processar so um arquivo.
 As gravacoes de tela saem com timestamps irregulares (VFR), e isso faz o
 video "tremer" nos zooms. O script regrava em 60fps constante e guarda o
 original em .video-originals/ (fora de public/).

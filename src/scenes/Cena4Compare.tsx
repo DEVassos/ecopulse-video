@@ -73,7 +73,7 @@ export const Cena4Compare: React.FC = () => {
         ))}
 
         <div
-          className="absolute bottom-6 left-6 z-20 px-4 py-2 rounded-lg bg-[#0F1F19]/90 border border-emerald-500/30 text-xs font-mono text-emerald-300"
+          className="absolute bottom-6 left-6 z-20 px-4 py-2 rounded-lg bg-[#0F1F19]/90 border border-emerald-500/30 text-[14px] font-mono text-emerald-300"
           style={{ opacity: interpolate(outro, [0, 1], [1, 0]) }}
         >
           {CENA4_CLIPS[activeIndex].legend}

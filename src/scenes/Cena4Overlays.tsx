@@ -52,23 +52,23 @@ export const DiscrepancyCard: React.FC = () => {
       style={{
         opacity,
         translate: `0px ${interpolate(opacity, [0, 1], [18, 0])}px`,
-        width: 372,
+        width: 424,
       }}
     >
       <div
-        className="rounded-xl border border-emerald-400/45 bg-[#08130F]/95 backdrop-blur-sm p-4"
+        className="rounded-xl border border-emerald-400/45 bg-[#08130F]/95 backdrop-blur-sm pl-4 pr-5 py-4"
         style={{ boxShadow: THEME.shadows.glow }}
       >
-        <div className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.18em] text-emerald-400">
-          <IconSwap className="w-3.5 h-3.5" />
+        <div className="flex items-center gap-2 text-[14px] font-mono uppercase tracking-[0.18em] text-lime-300">
+          <IconSwap className="w-4 h-4" />
           Discrepância
         </div>
 
-        <div className="mt-2 text-[19px] font-semibold leading-tight text-emerald-50">
+        <div className="mt-2 text-[25px] font-semibold leading-tight text-emerald-50">
           Carga não é emissão
         </div>
 
-        <div className="mt-1.5 text-[13px] leading-snug text-emerald-100/70">
+        <div className="mt-1.5 text-[16px] leading-snug text-emerald-100/80">
           Consumo maior pode significar pegada de carbono menor.
         </div>
 
@@ -79,8 +79,8 @@ export const DiscrepancyCard: React.FC = () => {
             translate: `0px ${interpolate(tail, [0, 1], [8, 0])}px`,
           }}
         >
-          <span className="mt-[3px] block w-1.5 h-1.5 rounded-full bg-emerald-300 shrink-0" />
-          <span className="text-[12px] leading-snug font-mono text-emerald-300">
+          <span className="mt-[6px] block w-2 h-2 rounded-full bg-lime-300 shrink-0" />
+          <span className="text-[15px] leading-snug font-mono text-emerald-300">
             A matriz elétrica local decide.
           </span>
         </div>

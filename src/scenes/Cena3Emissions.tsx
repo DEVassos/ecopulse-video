@@ -59,7 +59,7 @@ export const Cena3Emissions: React.FC = () => {
           />
 
           <div className="flex flex-col">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-emerald-400 font-bold">
+            <div className="text-[13px] font-mono uppercase tracking-wider text-lime-300 font-bold">
               Painel Analítico
             </div>
             <div className="text-base font-semibold text-slate-100 flex items-center gap-2">
@@ -73,7 +73,7 @@ export const Cena3Emissions: React.FC = () => {
 
           <div className="h-6 w-[1px] bg-emerald-500/25 mx-1" />
 
-          <div className="px-3 py-1 rounded bg-[#08130F]/80 border border-emerald-500/25 text-xs font-mono text-slate-300">
+          <div className="px-3 py-1 rounded bg-[#08130F]/80 border border-emerald-500/25 text-[14px] font-mono text-slate-200">
             Resolução de 1 Minuto
           </div>
         </div>

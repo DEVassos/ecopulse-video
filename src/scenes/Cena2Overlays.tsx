@@ -49,12 +49,12 @@ export const SatelliteBadge: React.FC = () => {
           </svg>
         </div>
         <div className="flex flex-col">
-          <span className="text-[10px] uppercase font-mono tracking-[0.16em] text-emerald-400/90 font-semibold">
+          <span className="text-[13px] uppercase font-mono tracking-[0.16em] text-lime-300 font-semibold">
             Fonte de imagem
           </span>
-          <span className="text-sm font-bold text-slate-100">Satélite real</span>
+          <span className="text-[17px] font-bold text-slate-100">Satélite real</span>
         </div>
-        <span className="text-[10px] font-mono text-slate-400 border-l border-emerald-500/25 pl-3">
+        <span className="text-[13px] font-mono text-slate-300 border-l border-emerald-500/25 pl-3">
           Sentinel-2
           <br />
           Landsat 9
@@ -74,10 +74,10 @@ const Chip: React.FC<{ kicker: string; value: string; icon: React.ReactNode }> =
       {icon}
     </div>
     <div className="flex flex-col">
-      <span className="text-[10px] uppercase font-mono tracking-[0.14em] text-emerald-400/90 font-semibold">
+      <span className="text-[13px] uppercase font-mono tracking-[0.14em] text-lime-300 font-semibold">
         {kicker}
       </span>
-      <span className="text-sm font-bold text-slate-100">{value}</span>
+      <span className="text-[17px] font-bold text-slate-100">{value}</span>
     </div>
   </div>
 );
@@ -168,10 +168,10 @@ export const InstantSeal: React.FC = () => {
           <IconBolt />
         </div>
         <div className="flex flex-col">
-          <span className="text-[10px] uppercase font-mono tracking-[0.16em] text-emerald-400 font-semibold">
+          <span className="text-[13px] uppercase font-mono tracking-[0.16em] text-lime-300 font-semibold">
             Cruzamento de dados
           </span>
-          <span className="text-lg font-black tracking-tight text-slate-100">
+          <span className="text-[23px] font-black tracking-tight text-slate-100">
             Cálculo instantâneo
           </span>
         </div>
@@ -206,22 +206,22 @@ export const SimulationBadge: React.FC = () => {
       </div>
 
       <div className="flex flex-col">
-        <span className="text-[11px] uppercase font-mono tracking-wider text-emerald-400 font-semibold">
+        <span className="text-[13px] uppercase font-mono tracking-wider text-lime-300 font-semibold">
           Recomendação Inteligente
         </span>
         <div className="flex items-baseline gap-2">
-          <span className="text-sm font-medium text-slate-400">Migrar para</span>
-          <span className="text-xl font-black tracking-tight text-slate-100">Toronto</span>
+          <span className="text-[16px] font-medium text-slate-400">Migrar para</span>
+          <span className="text-[25px] font-black tracking-tight text-slate-100">Toronto</span>
           <span className="text-slate-500">•</span>
-          <span className="text-sm font-mono text-emerald-300">Ontario 40 g/kWh</span>
+          <span className="text-[16px] font-mono text-emerald-300">Ontario 40 g/kWh</span>
         </div>
       </div>
 
       <div className="ml-1 flex flex-col items-end border-l border-emerald-500/30 pl-4">
-        <span className="text-[10px] uppercase font-mono tracking-[0.14em] text-slate-400">
+        <span className="text-[13px] uppercase font-mono tracking-[0.14em] text-slate-400">
           Emissões
         </span>
-        <span className="text-2xl font-black tracking-tight text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.5)]">
+        <span className="text-[31px] font-black tracking-tight text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.5)]">
           −86,44%
         </span>
       </div>

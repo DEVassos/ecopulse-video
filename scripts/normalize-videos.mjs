@@ -35,7 +35,12 @@ fs.mkdirSync(BACKUP_DIR, { recursive: true });
 
 // Filtro opcional: `npm run normalize-videos -- 08_report` normaliza só os
 // arquivos cujo nome contenha o termo (evita reprocessar tudo).
-const only = process.argv.slice(2).filter((a) => !a.startsWith("-"));
+const args = process.argv.slice(2);
+const sizeIndex = args.indexOf("--size");
+// `--size 1536x864` amplia para a largura nativa do <BrowserFrame>, evitando
+// que o navegador estique a gravação (era o que borrava o texto).
+const targetSize = sizeIndex >= 0 ? args[sizeIndex + 1] : null;
+const only = args.filter((a, i) => !a.startsWith("-") && i !== sizeIndex + 1);
 
 const files = fs
   .readdirSync(VIDEOS_DIR)
@@ -65,6 +70,7 @@ for (const name of files) {
       // saída `-r` faz a conversão de taxa direto no muxer.
       "-r",
       String(TARGET_FPS),
+      ...(targetSize ? ["-s", targetSize, "-sws_flags", "lanczos+accurate_rnd"] : []),
       "-c:v",
       "libx264",
       "-crf",
