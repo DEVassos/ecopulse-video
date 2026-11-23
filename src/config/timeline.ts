@@ -108,15 +108,25 @@ export const CENA1_CLIPS: readonly Cena1Clip[] = [
     exit: "whip",
   },
   {
-    // Da digitação até o fim do arquivo: clique em "Entrar", carregamento e
-    // dashboard já logado, sem pausa no meio.
+    // Digitação e clique em "Entrar", até o botão mostrar "Entrando...".
+    // Começa 3,2s antes para compensar o trecho de carregamento cortado abaixo.
     src: "videos/01_login_typing.mp4",
-    startSeconds: 17,
-    endSeconds: 33.6,
+    startSeconds: 13.8,
+    endSeconds: 25.4,
     speed: 1,
     atSeconds: 11.8,
     url: "app.ecopulse.greenops.io/login",
     enter: "whip",
+  },
+  {
+    // Corte seco para o dashboard já carregado: os 2,6s de "Carregando
+    // serviços..." (25,4–28,6s do arquivo) ficam de fora.
+    src: "videos/01_login_typing.mp4",
+    startSeconds: 28.6,
+    endSeconds: 33.6,
+    speed: 1,
+    atSeconds: 23.4,
+    url: "app.ecopulse.greenops.io/dashboard",
   },
 ] as const;
 
