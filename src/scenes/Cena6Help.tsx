@@ -46,8 +46,8 @@ export const Cena6Help: React.FC = () => {
         title="EcoPulse • Scientific Methodology & Formulas"
       >
         <SafeVideo
-          src="videos/08_help_formulas.mp4"
-          label="08 - Central de Ajuda & Fórmulas"
+          src="videos/09_help_formulas.mp4"
+          label="09 - Central de Ajuda & Fórmulas"
           className="w-full h-full"
         />
 

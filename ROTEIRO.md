@@ -108,7 +108,14 @@ Tom de voz: Consultivo, seguro e resolutivo.
 - Em 26,8s, selo animado com efeito de **carimbo**: "Tema Claro • Economia de
   Tinta / Vale para todas as exportações" (escala 2,2 → 1, rotação -22° → -7°).
   Fica **centralizado no meio da tela**, sobre os quatro documentos, para falar
-  de todos de uma vez em vez de destacar um só.
+  de todos de uma vez em vez de destacar um só. Sai em 29,5s, antes da última
+  frase.
+- Em 29,9s, na última frase — "Documentação na prática." — entra um **segundo
+  carimbo**, no mesmo lugar, em verde cheio com borda lima para encerrar a
+  cena: **"Documentação / Documentação na prática / Tudo explicado dentro do
+  EcoPulse"** (escala 2,6 → 1, rotação -22° → -7°).
+- Em 32,3s uma **varredura verde** atravessa a tela da esquerda para a direita e
+  entrega o corte para a Cena 6, no lugar de um fade no escuro.
 
 ---
 

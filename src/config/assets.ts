@@ -91,8 +91,8 @@ export const VIDEO_ASSET_MAP: Record<string, VideoAssetMapping> = {
     label: "Relatório Executivo & Pareto",
     specs: "1080p • 60fps • Curva Pareto",
   },
-  "videos/08_help_formulas.mp4": {
-    videoFile: "videos/08_help_formulas.mp4",
+  "videos/09_help_formulas.mp4": {
+    videoFile: "videos/09_help_formulas.mp4",
     fallbackImage: "images/ajuda 1.png",
     label: "Central de Ajuda & Fórmulas",
     specs: "1080p • 60fps • Documentação",

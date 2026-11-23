@@ -19,13 +19,14 @@ Coloque aqui as gravacoes de tela (.mp4) e rode `npm run scan`.
 -- Cena 5 (roteiro v3) --
 08_report_pareto.mp4       (relatorio: curva de Pareto e regras auditaveis)
 
--- Cenas 6 a 8 --
-09_help_formulas (nomenclatura antiga, ainda nao renomeada).
+-- Cena 6 (roteiro v3) --
+09_help_formulas.mp4       (pagina de ajuda com as formulas de calculo)
+
+-- Cenas 7 a 8 --
 Faltam: 10_settings_invite.mp4 (Cena 7).
 
-Atencao: os prefixos antigos (04_emissions_chart, 05_compare_services,
-06_compare_scatter) sao legado. O roteiro v3 usa a numeracao 05..10, entao
-os arquivos da Cena 4 sao 06 e 07.
+Atencao: os prefixos antigos (01_globe_rotation, 02_globe_zoom, 03_simulation_reveal,
+04_emissions_chart) sao legado. O roteiro v3 usa a numeracao 00..10.
 
 -- IMPORTANTE ao gravar um video novo --
 Rode `npm run normalize-videos` depois de copiar o arquivo para ca.

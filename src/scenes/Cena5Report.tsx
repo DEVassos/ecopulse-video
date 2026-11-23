@@ -125,51 +125,155 @@ const PdfCard: React.FC = () => {
   );
 };
 
+type StampTone = "paper" | "solid";
+
+type StampProps = {
+  kicker: string;
+  title: string;
+  caption?: string;
+  /** "paper" = selo claro de documento; "solid" = selo cheio verde, mais forte. */
+  tone?: StampTone;
+  /** Escala de entrada do carimbo (grande -> 1). */
+  scaleFrom?: number;
+  /** Tempo local (s) em que o carimbo começa a sair. Sem valor, fica até o fim. */
+  outAtSeconds?: number;
+};
+
+const STAMP_TONES: Record<
+  StampTone,
+  { box: string; kicker: string; title: string; caption: string; titleSize: number; glow: string }
+> = {
+  paper: {
+    box: "border-emerald-500 bg-emerald-50/97",
+    kicker: "text-emerald-700",
+    title: "text-emerald-900",
+    caption: "text-emerald-700/80",
+    titleSize: 31,
+    glow: "0 26px 70px -10px rgba(0,0,0,0.85), 0 0 0 1px rgba(16,185,129,0.35)",
+  },
+  solid: {
+    box: "border-lime-300 bg-emerald-600/96",
+    kicker: "text-lime-100",
+    title: "text-white",
+    caption: "text-emerald-50/90",
+    titleSize: 38,
+    glow:
+      "0 30px 80px -10px rgba(0,0,0,0.9), 0 0 44px rgba(52,211,153,0.55), inset 0 0 0 2px rgba(255,255,255,0.12)",
+  },
+};
+
 /**
- * Carimbo central. Fica no meio da tela, sobre os quatro PDFs, para falar de
- * todos eles de uma vez — não é um detalhe de um documento só.
+ * Carimbo central. Fica no meio da tela, sobre os PDFs, para falar de todos de
+ * uma vez — não é um detalhe de um documento só.
  */
-const StampSeal: React.FC = () => {
+const Stamp: React.FC<StampProps> = ({
+  kicker,
+  title,
+  caption,
+  tone = "paper",
+  scaleFrom = 2.2,
+  outAtSeconds,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const theme = STAMP_TONES[tone];
 
-  const stamp = spring({
+  const enter = spring({
     frame,
     fps,
     config: { damping: 11, stiffness: 190 },
   });
 
+  const outAt = outAtSeconds === undefined ? null : Math.round(outAtSeconds * fps);
+  const stay = outAt === null
+    ? 1
+    : interpolate(frame, [outAt, outAt + 16], [1, 0], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+        easing: Easing.in(Easing.cubic),
+      });
+
   return (
     <AbsoluteFill className="items-center justify-center z-50 pointer-events-none">
       <div
         style={{
-          opacity: interpolate(stamp, [0, 0.25, 1], [0, 1, 1], {
+          opacity: interpolate(enter, [0, 0.25, 1], [0, 1, 1], {
             extrapolateRight: "clamp",
-          }),
-          rotate: `${interpolate(stamp, [0, 1], [-22, -7])}deg`,
-          scale: interpolate(stamp, [0, 1], [2.2, 1], {
-            extrapolateRight: "clamp",
-            easing: Easing.out(Easing.cubic),
-          }),
+          }) * stay,
+          rotate: `${interpolate(enter, [0, 1], [-22, -7])}deg`,
+          scale:
+            interpolate(enter, [0, 1], [scaleFrom, 1], {
+              extrapolateRight: "clamp",
+              easing: Easing.out(Easing.cubic),
+            }) * interpolate(stay, [0, 1], [1.14, 1]),
+          translate: `${interpolate(stay, [0, 1], [-40, 0])}px 0px`,
         }}
       >
         <div
-          className="px-9 py-5 rounded-2xl border-[4px] border-emerald-500 bg-emerald-50/97 flex flex-col items-center gap-1"
-          style={{
-            boxShadow:
-              "0 26px 70px -10px rgba(0,0,0,0.85), 0 0 0 1px rgba(16,185,129,0.35)",
-          }}
+          className={`px-9 py-5 rounded-2xl border-[4px] flex flex-col items-center gap-1 ${theme.box}`}
+          style={{ boxShadow: theme.glow }}
         >
-          <span className="text-[15px] uppercase font-mono tracking-[0.28em] text-emerald-700 font-bold">
-            Detalhe de produto
+          <span
+            className={`text-[15px] uppercase font-mono tracking-[0.28em] font-bold ${theme.kicker}`}
+          >
+            {kicker}
           </span>
-          <span className="text-[31px] font-black text-emerald-900 tracking-tight whitespace-nowrap">
-            Tema Claro • Economia de Tinta
+          <span
+            className={`font-black tracking-tight whitespace-nowrap ${theme.title}`}
+            style={{ fontSize: theme.titleSize }}
+          >
+            {title}
           </span>
-          <span className="text-[15px] font-mono font-semibold text-emerald-700/80 tracking-wide">
-            Vale para todas as exportações
-          </span>
+          {caption ? (
+            <span
+              className={`text-[15px] font-mono font-semibold tracking-wide ${theme.caption}`}
+            >
+              {caption}
+            </span>
+          ) : null}
         </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+/**
+ * Varredura verde de saída. Cobre a tela da esquerda para a direita e entrega
+ * o corte para a cena 6, em vez de simplesmente sumir no escuro.
+ */
+const ExitWipe: React.FC<{ seconds: number }> = ({ seconds }) => {
+  const frame = useCurrentFrame();
+  const { fps, durationInFrames } = useVideoConfig();
+
+  const progress = interpolate(
+    frame,
+    [durationInFrames - Math.round(seconds * fps), durationInFrames],
+    [0, 1],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: Easing.inOut(Easing.cubic),
+    }
+  );
+
+  if (progress <= 0) {
+    return null;
+  }
+
+  return (
+    <AbsoluteFill className="pointer-events-none overflow-hidden" style={{ zIndex: 60 }}>
+      <div
+        className="absolute inset-0"
+        style={{
+          translate: `${-100 + progress * 100}% 0px`,
+          background:
+            "linear-gradient(90deg, #04100C 0%, #04100C 74%, #065F46 90%, #34D399 100%)",
+        }}
+      >
+        <span
+          className="absolute top-0 bottom-0 right-0 w-[6px]"
+          style={{ background: "#ECFDF5", boxShadow: "0 0 40px 8px rgba(52,211,153,0.9)" }}
+        />
       </div>
     </AbsoluteFill>
   );
@@ -285,7 +389,10 @@ export const Cena5Report: React.FC = () => {
   );
 
   return (
-    <SceneShell sceneKey="cena5">
+    <SceneShell
+      sceneKey="cena5"
+      overlay={<ExitWipe seconds={CENA5_OVERLAYS.exit.seconds} />}
+    >
       <BrowserFrame
         width={FULL_SCREEN_WIDTH}
         url="app.ecopulse.greenops.io/reports/pareto"
@@ -382,7 +489,24 @@ export const Cena5Report: React.FC = () => {
         </Sequence>
 
         <Sequence from={toFrame(CENA5_OVERLAYS.stamp.inSeconds)} layout="none">
-          <StampSeal />
+          <Stamp
+            kicker="Detalhe de produto"
+            title="Tema Claro • Economia de Tinta"
+            caption="Vale para todas as exportações"
+            outAtSeconds={
+              CENA5_OVERLAYS.stamp.outSeconds - CENA5_OVERLAYS.stamp.inSeconds
+            }
+          />
+        </Sequence>
+
+        <Sequence from={toFrame(CENA5_OVERLAYS.docStamp.inSeconds)} layout="none">
+          <Stamp
+            tone="solid"
+            kicker="Documentação"
+            title="Documentação na prática"
+            caption="Tudo explicado dentro do EcoPulse"
+            scaleFrom={2.6}
+          />
         </Sequence>
       </BrowserFrame>
     </SceneShell>

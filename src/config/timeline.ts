@@ -45,6 +45,12 @@ export interface TimelineConfig {
 /** Respiro padrão depois da narração, para a cena "respirar" antes do corte. */
 const DEFAULT_TAIL_SECONDS = 0.8;
 
+/**
+ * Respiro final da cena 5: o carimbo "Documentação na prática." entra depois da
+ * narração e uma varredura verde cobre a tela antes do corte para a cena 6.
+ */
+const CENA5_TAIL_SECONDS = 1.5;
+
 const scene = (
   key: SceneKey,
   label: string,
@@ -408,7 +414,8 @@ export const TIMELINE_CONFIG: TimelineConfig = {
     cena5: scene(
       "cena5",
       "Prestação de Contas",
-      "Relatórios Executivos & Exportação Otimizada"
+      "Relatórios Executivos & Exportação Otimizada",
+      CENA5_TAIL_SECONDS
     ),
     cena6: scene(
       "cena6",
@@ -443,6 +450,7 @@ export const TIMELINE_CONFIG: TimelineConfig = {
  * - 23,13–23,37 "...documento oficial de governança." -> "E olha o detalhe"
  * - 24,60–24,99 "E olha o detalhe de produto:" -> "o PDF se adapta..."
  * - 29,73–29,97 "...pronto para a diretoria." -> "Documentação na prática."
+ *   (última frase: 29,98–31,22s)
  * ------------------------------------------------------------------------- */
 
 export const CENA5_VIDEO = {
@@ -458,7 +466,7 @@ export const CENA5_OVERLAYS = {
   /** "Exporte relatórios completos em PDF ou CSV a partir de qualquer tela". */
   pdf: { inSeconds: 13.6 },
   /** Carimbo na fala "o PDF se adapta para o tema claro", centralizado sobre os 4 PDFs. */
-  stamp: { inSeconds: 26.8 },
+  stamp: { inSeconds: 26.8, outSeconds: 29.5 },
   /**
    * As outras três exportações entram espalhadas pela tela durante "use como
    * documento oficial de governança" (16,98–23,13), provando na prática que
@@ -472,6 +480,10 @@ export const CENA5_OVERLAYS = {
   },
   /** Escurece o fundo para o PDF ganhar primeiro plano. */
   scrim: { inSeconds: 22.4, seconds: 1.6 },
+  /** Carimbo final, na fala "Documentação na prática." (29,98–31,22). */
+  docStamp: { inSeconds: 29.9 },
+  /** Varredura verde que cobre a tela e entrega a Cena 6. */
+  exit: { seconds: 0.9 },
 } as const;
 
 /** Cena 6 - fórmula exibida com efeito máquina de escrever. */
