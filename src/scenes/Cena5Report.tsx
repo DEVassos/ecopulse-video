@@ -74,7 +74,7 @@ const RulesCard: React.FC = () => {
 
 /**
  * Cartão do PDF exportado. Ele não vem da gravação (o vídeo do relatório é
- * estático), então é composto aqui: entrada deslizando e um carimbo no fim.
+ * estático), então é composto aqui: entrada deslizando da direita.
  */
 const PdfCard: React.FC = () => {
   const frame = useCurrentFrame();
@@ -84,16 +84,6 @@ const PdfCard: React.FC = () => {
     frame,
     fps,
     config: { damping: 14, stiffness: 80 },
-  });
-
-  const stampAt =
-    Math.round(CENA5_OVERLAYS.stamp.inSeconds * fps) -
-    Math.round(CENA5_OVERLAYS.pdf.inSeconds * fps);
-
-  const stamp = spring({
-    frame: frame - stampAt,
-    fps,
-    config: { damping: 11, stiffness: 190 },
   });
 
   const floatY = interpolate(Math.sin((frame / fps) * Math.PI * 0.9), [-1, 1], [-6, 6]);
@@ -131,35 +121,57 @@ const PdfCard: React.FC = () => {
           className="w-full h-full object-contain object-top"
         />
       </div>
+    </div>
+  );
+};
 
-      {/* Selo de carimbo: Tema Claro • Economia de Tinta */}
+/**
+ * Carimbo central. Fica no meio da tela, sobre os quatro PDFs, para falar de
+ * todos eles de uma vez — não é um detalhe de um documento só.
+ */
+const StampSeal: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  const stamp = spring({
+    frame,
+    fps,
+    config: { damping: 11, stiffness: 190 },
+  });
+
+  return (
+    <AbsoluteFill className="items-center justify-center z-50 pointer-events-none">
       <div
-        className="absolute bottom-6 left-1/2 z-40"
         style={{
           opacity: interpolate(stamp, [0, 0.25, 1], [0, 1, 1], {
             extrapolateRight: "clamp",
           }),
-          translate: "-50% 0px",
-          rotate: `${interpolate(stamp, [0, 1], [-16, -7])}deg`,
-          scale: interpolate(stamp, [0, 1], [1.9, 1], {
+          rotate: `${interpolate(stamp, [0, 1], [-22, -7])}deg`,
+          scale: interpolate(stamp, [0, 1], [2.2, 1], {
             extrapolateRight: "clamp",
             easing: Easing.out(Easing.cubic),
           }),
         }}
       >
         <div
-          className="px-5 py-2.5 rounded-xl border-[3px] border-emerald-500 bg-emerald-50/95 flex flex-col items-center"
-          style={{ boxShadow: "0 10px 30px -6px rgba(0,0,0,0.6)" }}
+          className="px-9 py-5 rounded-2xl border-[4px] border-emerald-500 bg-emerald-50/97 flex flex-col items-center gap-1"
+          style={{
+            boxShadow:
+              "0 26px 70px -10px rgba(0,0,0,0.85), 0 0 0 1px rgba(16,185,129,0.35)",
+          }}
         >
-          <span className="text-[13px] uppercase font-mono tracking-[0.22em] text-emerald-700 font-bold">
+          <span className="text-[15px] uppercase font-mono tracking-[0.28em] text-emerald-700 font-bold">
             Detalhe de produto
           </span>
-          <span className="text-[21px] font-black text-emerald-900 tracking-tight whitespace-nowrap">
+          <span className="text-[31px] font-black text-emerald-900 tracking-tight whitespace-nowrap">
             Tema Claro • Economia de Tinta
+          </span>
+          <span className="text-[15px] font-mono font-semibold text-emerald-700/80 tracking-wide">
+            Vale para todas as exportações
           </span>
         </div>
       </div>
-    </div>
+    </AbsoluteFill>
   );
 };
 
@@ -171,8 +183,6 @@ type MiniPdfCardProps = {
   left: number;
   top: number;
   rotateDeg: number;
-  /** Tempo local (em relação ao início do cartão) em que ele começa a sair. */
-  outAtSeconds: number;
 };
 
 /**
@@ -187,7 +197,6 @@ const MiniPdfCard: React.FC<MiniPdfCardProps> = ({
   left,
   top,
   rotateDeg,
-  outAtSeconds,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -204,12 +213,6 @@ const MiniPdfCard: React.FC<MiniPdfCardProps> = ({
     extrapolateRight: "clamp",
   });
 
-  const outAt = Math.round(outAtSeconds * fps);
-  const exit = interpolate(frame, [outAt, outAt + 14], [1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-
   return (
     <div
       className="absolute z-20 rounded-xl overflow-hidden border border-emerald-400/45"
@@ -220,7 +223,7 @@ const MiniPdfCard: React.FC<MiniPdfCardProps> = ({
         top,
         opacity: interpolate(enter, [0, 0.4, 1], [0, 1, 1], {
           extrapolateRight: "clamp",
-        }) * exit,
+        }),
         translate: `${interpolate(enter, [0, 1], [-90, 0])}px ${interpolate(enter, [0, 1], [50, 0])}px`,
         rotate: `${rotateDeg + interpolate(enter, [0, 1], [9, 0])}deg`,
         boxShadow:
@@ -351,7 +354,6 @@ export const Cena5Report: React.FC = () => {
             left={34}
             top={96}
             rotateDeg={4}
-            outAtSeconds={CENA5_OVERLAYS.gallery.outSeconds - CENA5_OVERLAYS.gallery.comparacao.inSeconds}
           />
         </Sequence>
 
@@ -364,7 +366,6 @@ export const Cena5Report: React.FC = () => {
             left={318}
             top={412}
             rotateDeg={-3.5}
-            outAtSeconds={CENA5_OVERLAYS.gallery.outSeconds - CENA5_OVERLAYS.gallery.emissoes.inSeconds}
           />
         </Sequence>
 
@@ -377,8 +378,11 @@ export const Cena5Report: React.FC = () => {
             left={624}
             top={72}
             rotateDeg={5.5}
-            outAtSeconds={CENA5_OVERLAYS.gallery.outSeconds - CENA5_OVERLAYS.gallery.dashboard.inSeconds}
           />
+        </Sequence>
+
+        <Sequence from={toFrame(CENA5_OVERLAYS.stamp.inSeconds)} layout="none">
+          <StampSeal />
         </Sequence>
       </BrowserFrame>
     </SceneShell>

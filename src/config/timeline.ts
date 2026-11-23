@@ -457,19 +457,18 @@ export const CENA5_OVERLAYS = {
   rules: { inSeconds: 4.7, outSeconds: 8.7 },
   /** "Exporte relatórios completos em PDF ou CSV a partir de qualquer tela". */
   pdf: { inSeconds: 13.6 },
-  /** Carimbo na fala "o PDF se adapta para o tema claro". */
+  /** Carimbo na fala "o PDF se adapta para o tema claro", centralizado sobre os 4 PDFs. */
   stamp: { inSeconds: 26.8 },
   /**
    * As outras três exportações entram espalhadas pela tela durante "use como
    * documento oficial de governança" (16,98–23,13), provando na prática que
-   * qualquer tela exporta.
+   * qualquer tela exporta. Ficam até o fim da cena, para o carimbo central
+   * valer para os quatro documentos.
    */
   gallery: {
     comparacao: { inSeconds: 17.4 },
     emissoes: { inSeconds: 19.5 },
     dashboard: { inSeconds: 21.4 },
-    /** Saem antes do carimbo, para o PDF principal ficar sozinho. */
-    outSeconds: 24.2,
   },
   /** Escurece o fundo para o PDF ganhar primeiro plano. */
   scrim: { inSeconds: 22.4, seconds: 1.6 },

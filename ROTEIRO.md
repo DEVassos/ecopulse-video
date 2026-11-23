@@ -104,9 +104,11 @@ Tom de voz: Consultivo, seguro e resolutivo.
 - Entre 17,4s e 21,4s, na fala "documento oficial de governança", as outras
   **três exportações** entram espalhadas pela tela — Comparação de Serviços,
   Emissões e Dashboard — cada uma com um flash branco rápido de "exportando".
-  Elas saem em 24,2s, antes do carimbo.
+  Elas **permanecem até o fim da cena**, formando a galeria dos quatro PDFs.
 - Em 26,8s, selo animado com efeito de **carimbo**: "Tema Claro • Economia de
-  Tinta" (escala 1,9 → 1, rotação -16° → -7°).
+  Tinta / Vale para todas as exportações" (escala 2,2 → 1, rotação -22° → -7°).
+  Fica **centralizado no meio da tela**, sobre os quatro documentos, para falar
+  de todos de uma vez em vez de destacar um só.
 
 ---
 
