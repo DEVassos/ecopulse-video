@@ -70,6 +70,11 @@ export const SafeAudio: React.FC<SafeAudioProps> = ({
       src={staticFile(src)}
       volume={resolvedVolume}
       loop={loop}
+      // Em loop, o `frame` do volume continua contando a cada volta, em vez de
+      // recomeçar do zero. Sem isso, depois que a trilha recomeça (2:30) o
+      // volume reaplicava a curva do início do vídeo: a música subia no meio
+      // da fala da cena 7, o fade-in se repetia e o fade-out final não vinha.
+      loopVolumeCurveBehavior={loop ? "extend" : "repeat"}
       {...(startFrom !== undefined ? { startFrom } : {})}
       {...(endAt !== undefined ? { endAt } : {})}
     />
