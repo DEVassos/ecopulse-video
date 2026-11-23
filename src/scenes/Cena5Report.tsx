@@ -1,7 +1,6 @@
 import React from "react";
 import {
   AbsoluteFill,
-  Freeze,
   Sequence,
   interpolate,
   spring,
@@ -370,7 +369,6 @@ export const Cena5Report: React.FC = () => {
 
   const toFrame = (seconds: number) => Math.round(seconds * fps);
 
-  const videoFrames = toFrame(CENA5_VIDEO.durationSeconds);
   const scrim = interpolate(
     frame,
     [
@@ -398,33 +396,21 @@ export const Cena5Report: React.FC = () => {
         url="app.ecopulse.greenops.io/reports/pareto"
         title="EcoPulse • Relatórios & Exportação"
       >
-        <Sequence durationInFrames={videoFrames} layout="none">
-          <AbsoluteFill>
-            <SafeVideo
-              src={CENA5_VIDEO.src}
-              label="08 - Relatório Executivo & Exportação"
-              volume={0}
-              kenBurns={false}
-              className="w-full h-full"
-            />
-          </AbsoluteFill>
-        </Sequence>
-
-        {durationInFrames > videoFrames ? (
-          <Sequence from={videoFrames} layout="none">
-            <Freeze frame={videoFrames - 1}>
-              <AbsoluteFill>
-                <SafeVideo
-                  src={CENA5_VIDEO.src}
-                  label="08 - Relatório Executivo & Exportação"
-                  volume={0}
-                  kenBurns={false}
-                  className="w-full h-full"
-                />
-              </AbsoluteFill>
-            </Freeze>
-          </Sequence>
-        ) : null}
+        {/*
+         * Um único <Video> para a cena inteira: depois do último frame o
+         * elemento segura a imagem por conta própria. Montar um segundo
+         * elemento dentro de <Freeze> fazia a troca aparecer como um piscar
+         * preto, porque o novo vídeo começa vazio até decodificar o frame.
+         */}
+        <AbsoluteFill>
+          <SafeVideo
+            src={CENA5_VIDEO.src}
+            label="08 - Relatório Executivo & Exportação"
+            volume={0}
+            kenBurns={false}
+            className="w-full h-full"
+          />
+        </AbsoluteFill>
 
         <AbsoluteFill
           className="bg-[#04100C] pointer-events-none"

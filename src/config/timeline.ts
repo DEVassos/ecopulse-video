@@ -454,9 +454,8 @@ export const TIMELINE_CONFIG: TimelineConfig = {
  * ------------------------------------------------------------------------- */
 
 export const CENA5_VIDEO = {
+  /** 22,92s contra 31,71s de narração: o último frame segura até o fim da cena. */
   src: "videos/08_report_pareto.mp4",
-  /** Duração real do arquivo: depois disso o frame final fica congelado. */
-  durationSeconds: 22.916667,
   legend: "● Relatório Executivo • Curva de Pareto & Regras Auditáveis",
 } as const;
 
@@ -486,8 +485,28 @@ export const CENA5_OVERLAYS = {
   exit: { seconds: 0.9 },
 } as const;
 
-/** Cena 6 - fórmula exibida com efeito máquina de escrever. */
-export const CENA6_FORMULA = "P = CPU% × 1 + RAM × 0.375";
+/* ------------------------------------------------------------------------- *
+ * CENA 6 - Maturidade e Transparência (2:55 - 3:15)
+ *
+ * Narração (`cena6.mp3`) = 16,67s. Pausas medidas (janelas de 50ms):
+ * - 4,31-4,72  "…controle de acesso corporativo." -> "E com total transparência"
+ * - 6,95-7,20  "…transparência matemática:" -> "nossa página de ajuda documenta"
+ * - 8,96-9,10  "…ajuda documenta" -> "todas as fórmulas usadas nos cálculos"
+ * - 12,47-12,78 / 13,22-13,40  pausas de respiração dentro da enumeração
+ * - 14,84-15,02 "…potência e carbono." -> "Aqui, você sabe exatamente…"
+ *
+ * O card não mostra a fórmula (ela está legível na própria página do app, que
+ * aparece no vídeo): só revela as palavras-chave conforme a locução as cita.
+ * ------------------------------------------------------------------------- */
+
+export const CENA6_OVERLAYS = {
+  /** "autenticação e controle de acesso corporativo" (0,00-4,31). */
+  access: { inSeconds: 0.8, outSeconds: 4.3 },
+  /** "E com total transparência matemática:" (4,72-6,95). */
+  card: { inSeconds: 4.8 },
+  /** "Aqui, você sabe exatamente… como cada número é gerado" (15,02-16,50). */
+  closing: { inSeconds: 15.1 },
+} as const;
 
 /** Composição curta (loop de estande): sem narração, só o arco essencial. */
 export const SHORT_SCENE_KEYS: readonly SceneKey[] = [

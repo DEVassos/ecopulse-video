@@ -79,7 +79,7 @@ Marcos internos das cenas são **frações** da duração, não segundos fixos:
 
 - `CENA2_MOMENTS` — divisão da Cena 2 (rotação → zoom → simulação).
 - `CENA5_PDF_REVEAL` — quando o PDF entra em tela na Cena 5.
-- `CENA6_FORMULA` — fórmula exibida no efeito de máquina de escrever.
+- `CENA6_OVERLAYS` — janelas das palavras-chave da Cena 6, ancoradas nas pausas da locução.
 
 ---
 
