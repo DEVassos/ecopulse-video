@@ -8,6 +8,8 @@ export const THEME = {
     // Fontes auto-hospedadas em public/fonts (ver src/config/fonts.ts)
     sans: '"Inter", ui-sans-serif, system-ui, sans-serif',
     mono: '"JetBrains Mono", ui-monospace, monospace',
+    // Wordmark do logo (ver src/config/fonts.ts)
+    brand: '"Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif',
   },
   colors: {
     // Fundo Principal

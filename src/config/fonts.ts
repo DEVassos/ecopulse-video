@@ -33,3 +33,16 @@ loadFont({
 }).catch((error) => {
   throw new Error(`Falha ao carregar a fonte ${FONT_MONO}: ${String(error)}`);
 });
+
+export const FONT_BRAND = "Space Grotesk";
+
+// Wordmark do logo: só o peso 700 é usado.
+loadFont({
+  family: FONT_BRAND,
+  url: staticFile("fonts/SpaceGrotesk-700.woff2"),
+  weight: "700",
+  format: "woff2",
+  display: "block",
+}).catch((error) => {
+  throw new Error(`Falha ao carregar a fonte ${FONT_BRAND}: ${String(error)}`);
+});

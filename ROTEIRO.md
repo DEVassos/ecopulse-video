@@ -169,9 +169,15 @@ Tom de voz: Inspirador, firme e conclusivo.
 
 **[DIREÇÃO VISUAL / REMOTION]:**
 
-- Frase centralizada: "Visão geral, investigação e decisão."
-- Badge: "Conheça o projeto no estande • Equipe DEVassos".
-- Fade final para `logo.png`. Loop retorna para o frame inicial (Home).
+- Recap em três batidas, cada palavra entrando na sua pausa da narração:
+  "Visão geral," → "investigação" → "e decisão." (em verde, com glow).
+- Na fala "EcoPulse:", a frase se retira e entra o **wordmark oficial** (componente
+  `Brand`, portado da aplicação), grande e centralizado: a folha se transforma em
+  batimento cardíaco e volta, em ciclo de 2,4s.
+- Subtítulo em duas partes, também sincronizado: "conectando monitoramento, dados"
+  e depois "e sustentabilidade digital." em gradiente esmeralda → amarelo.
+- Sem fade para preto: o conteúdo se retira e o fundo fica intacto, para o loop
+  fechar em "fundo → fundo" sem piscar.
 
 ---
 
