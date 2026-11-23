@@ -415,8 +415,46 @@ export const TIMELINE_CONFIG: TimelineConfig = {
 };
 
 
-/** Cena 5 - a partir de qual fração da cena o PDF entra em tela. */
-export const CENA5_PDF_REVEAL = 0.55;
+/* ------------------------------------------------------------------------- *
+ * CENA 5 - Relatórios e Exportação Corporativa (2:20 - 2:55)
+ *
+ * Narração (`cena5.mp3`) = 31,71s. Gravação (`08_report_pareto.mp4`) = 22,92s,
+ * bem mais curta que a narração. Estrutura medida frame a frame:
+ * - 0,00–5,50s   tela parada, relatório no topo
+ * - 5,50–10,00s  rolagem suave
+ * - 10,00–22,92s tela parada de novo
+ *
+ * O último frame é congelado a partir de 22,92s; a segunda metade da cena é
+ * sustentada pelo cartão do PDF. Pausas reais da narração (usadas nas janelas):
+ * - 4,92–5,22  "usando | regras fixas e auditáveis..."
+ * - 8,49–8,85  "...sem IA alucinada." -> "Mas o dado só tem valor..."
+ * - 11,46–11,76 "circular." -> "Exporte relatórios completos..."
+ * - 16,71–16,98 "...a partir de qualquer tela." -> "Leve a análise..."
+ * - 23,13–23,37 "...documento oficial de governança." -> "E olha o detalhe"
+ * - 24,60–24,99 "E olha o detalhe de produto:" -> "o PDF se adapta..."
+ * - 29,73–29,97 "...pronto para a diretoria." -> "Documentação na prática."
+ * ------------------------------------------------------------------------- */
+
+export const CENA5_VIDEO = {
+  src: "videos/08_report_pareto.mp4",
+  /** Duração real do arquivo: depois disso o frame final fica congelado. */
+  durationSeconds: 22.916667,
+  legend: "● Relatório Executivo • Curva de Pareto & Regras Auditáveis",
+} as const;
+
+export const CENA5_OVERLAYS = {
+  /** "regras fixas e auditáveis... sem IA alucinada" (4,92–8,49). */
+  rules: { inSeconds: 4.7, outSeconds: 8.7 },
+  /** "Exporte relatórios completos em PDF ou CSV a partir de qualquer tela". */
+  pdf: { inSeconds: 13.6 },
+  /** Carimbo na fala "o PDF se adapta para o tema claro". */
+  stamp: { inSeconds: 26.8 },
+  /** Troca para a segunda exportação - prova que "qualquer tela" exporta. */
+  swapToCompare: { inSeconds: 27.6 },
+  swapBack: { inSeconds: 29.9 },
+  /** Escurece o fundo para o PDF ganhar primeiro plano. */
+  scrim: { inSeconds: 22.4, seconds: 1.6 },
+} as const;
 
 /** Cena 6 - fórmula exibida com efeito máquina de escrever. */
 export const CENA6_FORMULA = "P = CPU% × 1 + RAM × 0.375";

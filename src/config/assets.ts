@@ -85,8 +85,8 @@ export const VIDEO_ASSET_MAP: Record<string, VideoAssetMapping> = {
     label: "Curvas Cruzadas por Serviço",
     specs: "1080p • 60fps • Comparação cruzada",
   },
-  "videos/07_report_pareto.mp4": {
-    videoFile: "videos/07_report_pareto.mp4",
+  "videos/08_report_pareto.mp4": {
+    videoFile: "videos/08_report_pareto.mp4",
     fallbackImage: "images/relatorio 1.png",
     label: "Relatório Executivo & Pareto",
     specs: "1080p • 60fps • Curva Pareto",

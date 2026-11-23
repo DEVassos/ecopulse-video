@@ -33,9 +33,14 @@ const findFfmpeg = () => {
 const ffmpeg = findFfmpeg();
 fs.mkdirSync(BACKUP_DIR, { recursive: true });
 
+// Filtro opcional: `npm run normalize-videos -- 08_report` normaliza só os
+// arquivos cujo nome contenha o termo (evita reprocessar tudo).
+const only = process.argv.slice(2).filter((a) => !a.startsWith("-"));
+
 const files = fs
   .readdirSync(VIDEOS_DIR)
-  .filter((name) => name.toLowerCase().endsWith(".mp4"));
+  .filter((name) => name.toLowerCase().endsWith(".mp4"))
+  .filter((name) => only.length === 0 || only.some((term) => name.includes(term)));
 
 if (files.length === 0) {
   console.log("Nenhum .mp4 em public/videos/.");

@@ -79,18 +79,25 @@ Tom de voz: Tom de descoberta ("plot twist"), revelador.
 
 ---
 
-## CENA 5: RELATÓRIOS AUDITÁVEIS E EXPORTAÇÃO (2:20 - 2:55)
+## CENA 5: RELATÓRIOS E EXPORTAÇÃO CORPORATIVA (2:20 - 2:55)
 
 Tom de voz: Consultivo, seguro e resolutivo.
 
 **[NARRAÇÃO - cena5.mp3]:**
 
-> "[confident, consultative] Para transformar dados em ação, o EcoPulse gera relatórios inteligentes usando [emphasis] regras fixas e auditáveis... [slightly dramatic, emphasis] sem IA alucinada. [short pause] [analytical] O sistema identifica automaticamente que apenas 4 dos 8 serviços concentram quase [emphasis] noventa por cento da pegada de carbono. [helpful, clear] E na hora de documentar, exporte qualquer tela em PDF ou CSV. [warmly, a bit slower] O relatório se adapta para o tema claro, economizando tinta na impressão da sua diretoria."
+> "[confident, consultative] Para transformar dados em ação, o EcoPulse gera relatórios inteligentes usando [emphasis] regras fixas e auditáveis... [slightly dramatic, emphasis] sem IA alucinada. [short pause] [helpful, clear] Mas o dado só tem valor se ele puder circular. [confident] Exporte relatórios completos em PDF ou CSV a partir de qualquer tela. [short pause] [analytical] Leve a análise para uma planilha, integre com outras ferramentas ou use como documento oficial de governança. [warmly, a bit slower] E olha o detalhe de produto: o PDF se adapta para o tema claro, economizando tinta e pronto para a diretoria. Documentação na prática."
 
 **[DIREÇÃO VISUAL / REMOTION]:**
 
-- Inicia com `08_report_pareto.mp4` (foco no bloco de 89,8%).
-- Na fala do PDF, `pdf_export.jpg` flutua com sombra e selo animado "Tema Claro • Economia de Tinta".
+- Inicia com `08_report_pareto.mp4` mostrando o Relatório de forma geral.
+- Na fala "...regras fixas e auditáveis... sem IA alucinada", destaque sutil
+  (caixa ou linha verde) na seção "Como este relatório é gerado".
+- Na fala "Exporte relatórios completos em PDF ou CSV a partir de qualquer
+  tela", o mouse clica em "Imprimir / PDF" e `relatorio-pdf-1.png` surge
+  flutuando na tela.
+- Selo animado com efeito de "carimbo": "Tema Claro • Economia de Tinta".
+- Com o PDF em tela, flash rápido mostrando `relatorio-pdf-2.png` para provar
+  que "qualquer tela" pode ser exportada.
 
 ---
 
