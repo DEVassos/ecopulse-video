@@ -18,7 +18,8 @@ import { Cena3Emissions } from "./scenes/Cena3Emissions";
 import { Cena4Compare } from "./scenes/Cena4Compare";
 import { Cena5Report } from "./scenes/Cena5Report";
 import { Cena6Help } from "./scenes/Cena6Help";
-import { Cena7Outro } from "./scenes/Cena7Outro";
+import { Cena7Access } from "./scenes/Cena7Access";
+import { Cena8Outro } from "./scenes/Cena8Outro";
 
 const SCENE_COMPONENTS = {
   cena1: Cena1Hook,
@@ -27,7 +28,8 @@ const SCENE_COMPONENTS = {
   cena4: Cena4Compare,
   cena5: Cena5Report,
   cena6: Cena6Help,
-  cena7: Cena7Outro,
+  cena7: Cena7Access,
+  cena8: Cena8Outro,
 } as const;
 
 /**

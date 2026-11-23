@@ -17,6 +17,7 @@ export const SCENE_KEYS = [
   "cena5",
   "cena6",
   "cena7",
+  "cena8",
 ] as const;
 
 export type SceneKey = (typeof SCENE_KEYS)[number];
@@ -50,6 +51,18 @@ const DEFAULT_TAIL_SECONDS = 0.8;
  * narração e uma varredura verde cobre a tela antes do corte para a cena 6.
  */
 const CENA5_TAIL_SECONDS = 1.5;
+
+/**
+ * Respiro final da cena 7: a tela congela no link do convite já gerado e o
+ * carimbo de fecho entra depois da narração.
+ */
+const CENA7_TAIL_SECONDS = 0.95;
+
+/**
+ * Respiro final da cena 8 (fechamento): o fade para preto precisa de ar depois
+ * da última palavra antes do vídeo terminar.
+ */
+const CENA8_TAIL_SECONDS = 1.2;
 
 const scene = (
   key: SceneKey,
@@ -424,9 +437,15 @@ export const TIMELINE_CONFIG: TimelineConfig = {
     ),
     cena7: scene(
       "cena7",
+      "Governança",
+      "Controle de Acesso Corporativo & Convites Individuais",
+      CENA7_TAIL_SECONDS
+    ),
+    cena8: scene(
+      "cena8",
       "Fechamento",
       "Visão geral, investigação e decisão.",
-      0.9
+      CENA8_TAIL_SECONDS
     ),
   },
 };
@@ -508,12 +527,54 @@ export const CENA6_OVERLAYS = {
   closing: { inSeconds: 15.1 },
 } as const;
 
+/* ------------------------------------------------------------------------- *
+ * CENA 7 - Controle de Acesso Corporativo (3:15 - 3:40)
+ *
+ * Narração (`cena7.mp3`) = 21,55s. Pausas medidas (janelas de 50ms):
+ * - 3,73-4,16   "…o acesso também é controlado." -> "O administrador pode…"
+ * - 11,49-11,95 "…usuário ou administrador." -> "Com um clique…"
+ * - 15,21/16,57 respirações dentro de "com validade definida, pronto para…"
+ * - 18,21-18,46 "…pronto para ser compartilhado." -> "Simples, seguro e…"
+ * - 21,38 fim da locução
+ *
+ * A gravação (`10_config.mp4`, 25,03s) começa com ~11s de página praticamente
+ * imóvel antes de alguém digitar o e-mail. Por isso o clipe entra já em 6,0s
+ * (`CENA7_TRIM_BEFORE_SECONDS`): com esse corte os eventos da tela caem nas
+ * falas certas — digitação em "informando o e-mail", cliques em "Com um
+ * clique", resultado do convite em "com validade definida" e o bloco do link
+ * (com "Copiar") em "pronto para ser compartilhado".
+ * ------------------------------------------------------------------------- */
+
+/** Quanto do começo morto da gravação é descartado (11s de tela imóvel). */
+export const CENA7_TRIM_BEFORE_SECONDS = 6;
+
+export const CENA7_VIDEO = {
+  src: "videos/10_config.mp4",
+} as const;
+
+export const CENA7_OVERLAYS = {
+  /** "o acesso também é controlado" (0,00–3,73). */
+  access: { inSeconds: 0.7, outSeconds: 3.9 },
+  /** "O administrador pode convidar novos integrantes" (4,16–11,49). */
+  invite: { inSeconds: 4.3, outSeconds: 11.6 },
+  /** "Com um clique, o EcoPulse gera um convite exclusivo" (11,95–15,34). */
+  oneClick: { inSeconds: 12.0, outSeconds: 15.5 },
+  /**
+   * "com validade definida, pronto para ser compartilhado" (15,34–18,21).
+   * Começa depois do scroll automático da página (vídeo 22,4s -> cena 16,4s),
+   * que é quando o bloco com o link e o botão "Copiar" fica visível.
+   */
+  link: { inSeconds: 16.6, outSeconds: 18.4 },
+  /** "Simples, seguro e sob controle da empresa." (18,46–21,38). */
+  closing: { inSeconds: 18.5 },
+} as const;
+
 /** Composição curta (loop de estande): sem narração, só o arco essencial. */
 export const SHORT_SCENE_KEYS: readonly SceneKey[] = [
   "cena1",
   "cena2",
   "cena3",
-  "cena7",
+  "cena8",
 ];
 
 const audioDurationOf = (key: SceneKey): number => {

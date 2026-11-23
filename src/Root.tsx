@@ -21,11 +21,12 @@ import { Cena3Emissions } from "./scenes/Cena3Emissions";
 import { Cena4Compare } from "./scenes/Cena4Compare";
 import { Cena5Report } from "./scenes/Cena5Report";
 import { Cena6Help } from "./scenes/Cena6Help";
-import { Cena7Outro } from "./scenes/Cena7Outro";
+import { Cena7Access } from "./scenes/Cena7Access";
+import { Cena8Outro } from "./scenes/Cena8Outro";
 
 const PREVIEW_PROPS = { showPlaceholders: true };
 
-/** Vídeo completo: as 7 cenas em sequência. */
+/** Vídeo completo: as 8 cenas em sequência. */
 const EcoPulseMain: React.FC = () => (
   <EcoPulseComposition scenes={SCENE_KEYS} />
 );
@@ -46,7 +47,8 @@ const ISOLATED_SCENES: ReadonlyArray<{
   { key: "cena4", id: "Cena4-Compare", component: Cena4Compare },
   { key: "cena5", id: "Cena5-Report", component: Cena5Report },
   { key: "cena6", id: "Cena6-Help", component: Cena6Help },
-  { key: "cena7", id: "Cena7-Outro", component: Cena7Outro },
+  { key: "cena7", id: "Cena7-Access", component: Cena7Access },
+  { key: "cena8", id: "Cena8-Outro", component: Cena8Outro },
 ];
 
 export const RemotionRoot: React.FC = () => {

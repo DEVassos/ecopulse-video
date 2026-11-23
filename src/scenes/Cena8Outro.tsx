@@ -10,11 +10,11 @@ import { SceneShell } from "../components/SceneShell";
 import { SafeImage } from "../components/SafeImage";
 
 /**
- * Cena 7 - Fechamento
+ * Cena 8 - Fechamento
  * Retoma o clima da Cena 1: frase de impacto, convite ao estande e assinatura
  * com o logo, terminando em fade para preto.
  */
-export const Cena7Outro: React.FC = () => {
+export const Cena8Outro: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
 
@@ -46,7 +46,7 @@ export const Cena7Outro: React.FC = () => {
   const pulse = 0.5 + 0.5 * Math.sin((frame / fps) * Math.PI * 2);
 
   return (
-    <SceneShell sceneKey="cena7" showHeader={false} overlay={
+    <SceneShell sceneKey="cena8" showHeader={false} overlay={
       <div
         className="absolute inset-0 pointer-events-none"
         style={{ backgroundColor: "#000", opacity: 1 - finalFadeOut }}

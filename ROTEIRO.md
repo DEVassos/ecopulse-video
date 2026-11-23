@@ -194,7 +194,7 @@ Tom de voz: Inspirador, firme e conclusivo.
 - `public/videos/07_compare_scatter.mp4`
 - `public/videos/08_report_pareto.mp4`
 - `public/videos/09_help_formulas.mp4`
-- `public/videos/10_settings_invite.mp4` (Vídeo da Cena 7)
+- `public/videos/10_config.mp4` (Vídeo da Cena 7)
 
 **Imagens**
 
